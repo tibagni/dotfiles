@@ -53,5 +53,11 @@ let mapleader=","
 " Map ,<space> to clear search highlight
 nnoremap <leader><space> :nohlsearch<CR>
 
-" Pressing ,ss will toggle and untoggle spell checking
-map <leader>ss :setlocal spell!<cr>
+" Map ,ss to toggle and untoggle spell checking
+map <leader>ss :setlocal spell!<CR>
+
+" Map ,t to open a new tab
+map <leader>t :tabnew<CR>
+
+" Map ,g to perform vimgrep recursively
+map <leader>g :vimgrep  **/*<left><left><left><left><left>
