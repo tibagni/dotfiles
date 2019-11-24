@@ -2,6 +2,12 @@
 
 function echo-ok    { printf "\r\033[2K\033[0;32m[ OK ]\033[0m %s\n" "$*"; }
 function echo-info  { printf "\r\033[2K\033[0;34m[ .. ]\033[0m %s\n" "$*"; }
+function print-files {
+    for file in $(ls $1)
+    do
+        echo-info "    $file "
+    done
+}
 
 echo ================================================== 
 echo Installing dotfiles...
@@ -42,38 +48,58 @@ then
     mkdir ~/.vim
 fi
 
-echo-info "installing ~/.vim/vimrc..."
 cp vim/vimrc ~/.vim/vimrc
+echo-ok "installed vimrc."
 
 if [ ! -d ~/.vim/colors ]
 then
-    echo-info "creating the colors dir..."
     mkdir ~/.vim/colors
 fi
 
-echo-info "installing badwolf color scheme..."
 cp vim/colors/badwolf.vim ~/.vim/colors/badwolf.vim
+echo-ok "installed badwolf color scheme"
 
+# Install plugins
+echo-info "installing plugins..."
+print-files vim/plugin
 if [ ! -d ~/.vim/plugin ]
 then
-    echo-info "creating plugin folder..."
     mkdir ~/.vim/plugin
 fi
 
-# Install plugins
-for plugin in $(ls vim/plugin)
-do
-    echo-info "installing $plugin..."
-    cp vim/plugin/$plugin ~/.vim/plugin/$plugin
-done
+cp vim/plugin/* ~/.vim/plugin/
 
 # Copy syntax files for CSyntaxAfter
 if [ ! -d ~/.vim/after/syntax ]
 then
-    echo-info "creating syntax folder for CSyntaxAfter..."
     mkdir -p ~/.vim/after/syntax
 fi
+echo-info "installing CSyntaxAfter syntax files"
+print-files vim/after/syntax
 cp vim/after/syntax/* ~/.vim/after/syntax/
+echo-ok "done installing plugins"
+
+# Install syntax for other languages
+echo-info "installing syntax files..."
+print-files vim/syntax
+if [ ! -d ~/.vim/syntax ]
+then
+    mkdir ~/.vim/syntax
+fi
+
+if [ ! -d ~/.vim/indent ]
+then
+    mkdir ~/.vim/indent
+fi
+
+if [ ! -d ~/.vim/ftdetect ]
+then
+    mkdir ~/.vim/ftdetect
+fi
+cp vim/syntax/* ~/.vim/syntax/
+cp vim/indent/* ~/.vim/indent/
+cp vim/ftdetect/* ~/.vim/ftdetect
+echo-ok "done installing syntax files"
 
 
-echo-ok "done!"
+echo-ok "All done for vim!"
