@@ -26,6 +26,9 @@ set incsearch
 " Enable syntax highlighting
 syntax enable              
 
+" Use solarized color scheme
+colorscheme badwolf
+
 " Use spaces for tabs
 set expandtab
 
@@ -61,3 +64,6 @@ map <leader>t :tabnew<CR>
 
 " Map ,g to perform vimgrep recursively
 map <leader>g :vimgrep  **/*<left><left><left><left><left>
+
+" Use CSyntaxAfter plugin for syntax highlight on C-like languages
+autocmd! FileType c,cpp,java,php call CSyntaxAfter()
