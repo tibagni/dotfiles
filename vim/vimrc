@@ -65,5 +65,8 @@ map <leader>t :tabnew<CR>
 " Map ,g to perform vimgrep recursively
 map <leader>g :vimgrep  **/*<left><left><left><left><left>
 
+" Map ,/ to perform a 'comment block' command (using //)
+map <leader>/ :normal 0i//<CR>
+
 " Use CSyntaxAfter plugin for syntax highlight on C-like languages
 autocmd! FileType c,cpp,java,php call CSyntaxAfter()
