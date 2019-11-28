@@ -12,6 +12,11 @@ au FocusGained,BufEnter * checktime
 " Graphical menu for autocomplete
 set wildmenu
 
+" Make 'find' fuzzy
+" Search down into subfolders
+" Provides tab completion for all file related tasks
+set path+=**
+
 " Always show cursor position
 set ruler
 
@@ -48,6 +53,9 @@ set showcmd
 
 " Draws a horizontal highlight on the line the cursor is currently on
 set cursorline
+
+" Set vertical split to open new window on the right
+set splitright
 
 " With a map leader it's possible to do extra key combinations
 " like <leader>w saves the current file
