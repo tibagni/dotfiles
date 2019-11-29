@@ -1,0 +1,41 @@
+#! /bin/bash
+# Bulk Rename. Open a vim buffer with a list of all files (and folders) to be edited
+# All files will be renamed according to the changes made to the buffer
+
+FILES=()
+
+if [ ! -z "$1" ]
+then
+    cd "$1"
+fi
+
+touch .brtmp
+
+for f in *
+do
+   echo $f >> .brtmp
+   FILES+=("$f")
+done
+
+vim .brtmp
+
+o=$IFS
+IFS=$(echo -en "\n\b")
+
+i=0
+count=0
+for f in $(cat .brtmp)
+do
+    newFile="${FILES[$i]}"
+    if [ $f != $newFile ]
+    then
+        mv "$newFile" "$f"
+        ((count++))
+    fi
+    ((i++))
+done
+
+IFS=o
+rm .brtmp
+
+echo "$count file(s) renamed"

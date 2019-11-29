@@ -106,6 +106,16 @@ function install_vim_files {
     echo-ok "All done for vim!"
 }
 
+function install_scripts()
+{
+   if [ ! -d ~/bin ]
+   then
+       mkdir ~/bin
+   fi 
+   cp scripts/* ~/bin
+   echo-ok "done installing scripts in ~/bin"
+}
+
 
 while [ 1 ]
 do
@@ -114,12 +124,14 @@ do
     echo ==================================================
 
     echo-option "1) Install vim configuration"
-    echo-option "2) Exit"
+    echo-option "2) Install scripts"
+    echo-option "3) Exit"
 
     read -r option
     case $option in
         "1") install_vim_files;;
-        "2") break;;
+        "2") install_scripts;;
+        "3") break;;
     esac
 done
 

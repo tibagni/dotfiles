@@ -1,0 +1,61 @@
+#! /bin/bash
+# Tree. Shows the file structure in a hierarchy "Tree like" view
+
+RED='\033[0;31m'
+PURPLE='\033[1;35m'
+NC='\033[0m' # No Color
+
+ls_option=""
+
+function print_dir    { printf "${PURPLE}%s${NC}\n" "$*"; }
+function print_exe    { printf "${RED}%s${NC}\n" "$*"; }
+function print_file   { printf "%s\n" "$*"; }
+function print_files() {
+    ls $ls_option "$1" | while read f
+    do
+        if [ -d "$1/$f" ]
+        then
+            # Lets skip the directories an print all the files first
+            continue
+        elif [ -x "$1/$f" ]
+        then
+            print_exe "$2|-$f"
+        else
+            print_file "$2|-$f"
+        fi
+    done
+
+    # Leave the directories to the end
+    ls $ls_option "$1" | while read f
+    do
+        if [ "$f" = "." -o "$f" = ".." ]
+        then
+            continue
+        fi
+
+        if [ -d "$1/$f" ]
+        then
+            print_dir "$2|-$1/$f"
+            print_files "$1/$f" "$2   "
+        fi
+    done
+}
+
+(
+while getopts ":a" opt
+do
+    case "$opt" in
+        a)  ls_option="-a"
+            shift 1
+            ;;
+    esac
+done
+
+dir=$1
+
+if [ -z $1 ]
+then
+    dir="."
+fi
+print_files $dir ""
+) | less
