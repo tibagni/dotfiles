@@ -11,18 +11,19 @@ function print-files {
     done
 }
 
-function install_vim_files {
+function install_vim_links()
+{
     deldotVimrc=n
-    delVimrc=n
+    deldotVim=n
     if [ -f ~/.vimrc ]
     then
-        read -p ".vimrc exists on your home. Override? (y/n) " -n1 deldotVimrc
+        read -p ".vimrc exists on your home. Delete? (y/n) " -n1 deldotVimrc
         echo
     fi
 
-    if [ -f ~/.vim/vimrc ]
+    if [ -d ~/.vim ]
     then
-        read -p "vimrc exists on your .vim folder. Override? (y/n) " -n1 delVimrc
+        read -p "There is already a .vim folder. Override? (y/n) " -n1 deldotVim
         echo
     fi
 
@@ -32,91 +33,46 @@ function install_vim_files {
         rm ~/.vimrc
     fi
 
-    if [ $delVimrc = "y" ]
+    if [ $deldotVim = "y" ]
     then
-        echo-info "deliting current ~/.vim/vimrc file..."
-        rm ~/.vim/vimrc
+        echo-info "deliting current ~/.vim folder..."
+        rm -rf ~/.vim
     fi
 
     if [ ! -d ~/.vim ]
     then
-        echo-info "~/.vim does not exist. Creating..."
-        mkdir ~/.vim
-    fi
-
-    if [ ! -f ~/.vim/vimrc ]
-    then
-        cp vim/vimrc ~/.vim/vimrc
-        echo-ok "installed vimrc."
+        ln -s $SCRIPT_PATH/vim ~/.vim
+        echo-ok "installed .vim link."
     else
-        echo-skip "Skipped vimrc. ~/.vim/vimrc will not be overwritten"
+        echo-skip "Skipped ~/.vim will not be overwritten"
     fi
-
-    if [ ! -d ~/.vim/colors ]
-    then
-        mkdir ~/.vim/colors
-    fi
-
-    cp vim/colors/badwolf.vim ~/.vim/colors/badwolf.vim
-    echo-ok "installed badwolf color scheme"
-
-    # Install plugins
-    echo-info "installing plugins..."
-    print-files vim/plugin
-    if [ ! -d ~/.vim/plugin ]
-    then
-        mkdir ~/.vim/plugin
-    fi
-
-    cp vim/plugin/* ~/.vim/plugin/
-
-    # Copy syntax files for CSyntaxAfter
-    if [ ! -d ~/.vim/after/syntax ]
-    then
-        mkdir -p ~/.vim/after/syntax
-    fi
-    echo-info "installing CSyntaxAfter syntax files"
-    print-files vim/after/syntax
-    cp vim/after/syntax/* ~/.vim/after/syntax/
-    echo-ok "done installing plugins"
-
-    # Install syntax for other languages
-    echo-info "installing syntax files..."
-    print-files vim/syntax
-    if [ ! -d ~/.vim/syntax ]
-    then
-        mkdir ~/.vim/syntax
-    fi
-
-    if [ ! -d ~/.vim/indent ]
-    then
-        mkdir ~/.vim/indent
-    fi
-
-    if [ ! -d ~/.vim/ftdetect ]
-    then
-        mkdir ~/.vim/ftdetect
-    fi
-    cp vim/syntax/* ~/.vim/syntax/
-    cp vim/indent/* ~/.vim/indent/
-    cp vim/ftdetect/* ~/.vim/ftdetect
-    echo-ok "done installing syntax files"
-
-
-    echo-ok "All done for vim!"
 }
 
-function install_scripts()
+function install_scripts_link()
 {
-   if [ ! -d ~/bin ]
-   then
-       mkdir ~/bin
-   fi 
-   cp scripts/* ~/bin
-   echo-ok "done installing scripts in ~/bin"
+    delBin="n"
+    if [ -e ~/bin ]
+    then
+        read -p "There is already a folder/file called bin on your home directory. Override? (y/n) " -n1 delBin 
+    fi 
+
+    if [ $delBin = "y" ]
+    then
+        echo-info "Deleting existing ~/bin..."
+        rm -rf ~/bin 
+    fi
+
+    if [ -e ~/bin ]
+    then
+        echo-skip "Skipped installing scripts"
+    else
+        ln -s $SCRIPT_PATH/scripts ~/bin 
+        echo-ok "Installed scripts in ~/bin"
+    fi
 }
 
 
+SCRIPT_PATH=$(cd `dirname $0` | pwd)
 while [ 1 ]
 do
     echo ==================================================
@@ -129,8 +85,8 @@ do
 
     read -r option
     case $option in
-        "1") install_vim_files;;
-        "2") install_scripts;;
+        "1") install_vim_links;;
+        "2") install_scripts_link;;
         "3") break;;
     esac
 done
