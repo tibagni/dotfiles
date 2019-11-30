@@ -6,10 +6,27 @@ PURPLE='\033[1;35m'
 NC='\033[0m' # No Color
 
 ls_option=""
+color=true
 
-function print_dir    { printf "${PURPLE}%s${NC}\n" "$*"; }
-function print_exe    { printf "${RED}%s${NC}\n" "$*"; }
-function print_file   { printf "%s\n" "$*"; }
+function print_dir    {
+    if "$color"
+    then
+        printf "${PURPLE}%s${NC}\n" "$*";
+    else
+        printf "%s\n" "$*";
+    fi
+}
+function print_exe    {
+    if "$color"
+    then
+        printf "${RED}%s${NC}\n" "$*";
+    else
+        printf "%s\n" "$*";
+    fi
+}
+function print_file   {
+    printf "%s\n" "$*";
+}
 function print_files() {
     ls $ls_option "$1" | while read f
     do
@@ -42,14 +59,14 @@ function print_files() {
 }
 
 (
-while getopts ":a" opt
+while getopts 'ac' opt
 do
     case "$opt" in
-        a)  ls_option="-a"
-            shift 1
-            ;;
+        a)  ls_option="-a" ;;
+        c) color=false ;;
     esac
 done
+shift $(( OPTIND - 1 ))
 
 dir=$1
 
