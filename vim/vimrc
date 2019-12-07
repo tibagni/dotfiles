@@ -28,6 +28,10 @@ set whichwrap+=<,>,h,l
 set hlsearch
 set incsearch
 
+" Ignores case during search
+set ignorecase
+set smartcase
+
 " Enable syntax highlighting
 syntax enable              
 
@@ -72,6 +76,9 @@ map <leader>t :tabnew<CR>
 
 " Map ,g to perform vimgrep recursively
 map <leader>g :vimgrep  **/*<left><left><left><left><left>
+
+" Map ,f to perform 'fuzzy search like' on edit command
+map <leader>f :edit  **/*
 
 " Map ,/ to perform a 'comment block' command (using //)
 map <leader>/ :normal 0i//<CR>

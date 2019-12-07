@@ -81,13 +81,18 @@ do
 
     echo-option "1) Install vim configuration"
     echo-option "2) Install scripts"
-    echo-option "3) Exit"
+    echo-option "3) Install all"
+    echo-option "4) Exit"
 
     read -r option
     case $option in
         "1") install_vim_links;;
         "2") install_scripts_link;;
-        "3") break;;
+        "3")
+            install_vim_links
+            install_scripts_link
+            ;;
+        "4") break;;
     esac
 done
 
