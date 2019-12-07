@@ -75,4 +75,4 @@ then
     dir="."
 fi
 print_files $dir ""
-) | less
+) | less -R
