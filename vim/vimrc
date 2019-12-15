@@ -61,6 +61,12 @@ set cursorline
 " Set vertical split to open new window on the right
 set splitright
 
+" Smart way to move between windows
+map <C-j> <C-W>j
+map <C-k> <C-W>k
+map <C-h> <C-W>h
+map <C-l> <C-W>l
+
 " With a map leader it's possible to do extra key combinations
 " like <leader>w saves the current file
 let mapleader=","
@@ -83,6 +89,9 @@ map <leader>f :edit  **/*
 " Map ,/ to perform a 'comment block' command (using //)
 map <leader>/ :normal 0i//<CR>
 
+" Map ,# to perform a 'comment block' command (using #)
+map <leader># :normal 0i#<CR>
+
 " Use CSyntaxAfter plugin for syntax highlight on C-like languages
 autocmd! FileType c,cpp,java,php call CSyntaxAfter()
 
@@ -90,3 +99,7 @@ autocmd! FileType c,cpp,java,php call CSyntaxAfter()
 " For git commit, highlight the 72th column
 let &colorcolumn="101"
 autocmd FileType gitcommit let &colorcolumn="72"
+
+" easymotion highlight colors
+hi clear EasyMotionShade
+hi link EasyMotionShade Comment
