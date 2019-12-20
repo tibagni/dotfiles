@@ -33,7 +33,7 @@ set ignorecase
 set smartcase
 
 " Enable syntax highlighting
-syntax enable              
+syntax enable
 
 " Use solarized color scheme
 colorscheme badwolf
@@ -47,7 +47,7 @@ set shiftwidth=4
 set softtabstop=4
 
 " Set an hybrid of absolute and relative numbers
-set number relativenumber 
+set number relativenumber
 
 " Highlight matching
 set showmatch
@@ -71,26 +71,32 @@ map <C-l> <C-W>l
 " like <leader>w saves the current file
 let mapleader=","
 
-" Map ,<space> to clear search highlight
+" Map <leader><space> to clear search highlight
 nnoremap <leader><space> :nohlsearch<CR>
 
-" Map ,ss to toggle and untoggle spell checking
+" Map <leader>ss to toggle and untoggle spell checking
 map <leader>ss :setlocal spell!<CR>
 
-" Map ,t to open a new tab
+" Map <leader>t to open a new tab
 map <leader>t :tabnew<CR>
 
-" Map ,g to perform vimgrep recursively
+" Map <leader>g to perform vimgrep recursively
 map <leader>g :vimgrep  **/*<left><left><left><left><left>
 
-" Map ,f to perform 'fuzzy search like' on edit command
+" Map <leader>f to perform 'fuzzy search like' on edit command
 map <leader>f :edit  **/*
 
-" Map ,/ to perform a 'comment block' command (using //)
+" Map <leader>/ to perform a 'comment block' command (using //)
 map <leader>/ :normal 0i//<CR>
 
-" Map ,# to perform a 'comment block' command (using #)
+" Map <leader># to perform a 'comment block' command (using #)
 map <leader># :normal 0i#<CR>
+
+" Map <leader>. to remove all trailing spaces
+map <leader>. :%s/\s\+$//g<CR>
+
+" Map <leader>; to Highlight trailing spaces
+map <leader>; :/\s\+$<CR>
 
 " Use CSyntaxAfter plugin for syntax highlight on C-like languages
 autocmd! FileType c,cpp,java,php call CSyntaxAfter()
