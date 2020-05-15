@@ -50,13 +50,13 @@ function install_vim_links()
 
 function install_scripts_link()
 {
-    delBin="n"
+    action="c"
     if [ -e ~/bin ]
     then
-        read -p "There is already a folder/file called bin on your home directory. Override? (y/n) " -n1 delBin 
+        read -p "There is already a folder/file called bin on your home directory. Override(o)/Copy to existing folder(e)/Cancel(c)? " -n1 action 
     fi 
 
-    if [ $delBin = "y" ]
+    if [ $action = "o" ]
     then
         echo-info "Deleting existing ~/bin..."
         rm -rf ~/bin 
@@ -64,7 +64,13 @@ function install_scripts_link()
 
     if [ -e ~/bin ]
     then
-        echo-skip "Skipped installing scripts"
+        if [ $action = "e" ]
+        then
+            cp $SCRIPT_PATH/scripts/* ~/bin
+            echo-ok "Coppied scripts into existing ~/bin"
+        else
+            echo-skip "Skipped installing scripts"
+        fi
     else
         ln -s $SCRIPT_PATH/scripts ~/bin 
         echo-ok "Installed scripts in ~/bin"
