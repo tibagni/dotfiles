@@ -2,7 +2,7 @@
 export PATH=$HOME/bin:$HOME/scripts:/usr/local/bin:$HOME/dotfiles/scripts:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH="/home/tbagni/.oh-my-zsh"
+export ZSH=$HOME/.oh-my-zsh
 
 export VISUAL=vim
 export EDITOR="$VISUAL"
@@ -30,11 +30,13 @@ function mkcd()
 }
 
 # Aliases
-alias open=xdg-open
+which xdg-open > /dev/null
+if [ $? = 0 ]
+then
+    alias open=xdg-open
+fi
 alias lv="java -jar ~/bin/log-viewer/LogViewer.jar"
 alias d2j="sh ~/bin/dex-tools-2.0/dex2jar-2.0/d2j-dex2jar.sh -f"
-alias adb="/home/tbagni/Android/Sdk/platform-tools/adb"
-alias fastboot="/home/tbagni/Android/Sdk/platform-tools/fastboot"
 alias python=python3
 
 screenfetch
