@@ -40,3 +40,4 @@ alias d2j="sh ~/bin/dex-tools-2.0/dex2jar-2.0/d2j-dex2jar.sh -f"
 alias python=python3
 
 screenfetch
+source $HOME/.config/broot/launcher/bash/br
