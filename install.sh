@@ -43,4 +43,17 @@ for file in $files; do
     echo-info "Creating symlink to $file in home directory."
     ln -s $dir/$file ~/.$file
 done
+
+# install oh-my-zsh custom plugins
+if [ -d ~/.oh-my-zsh ]
+then
+    echo-info "Installing oh-my-zsh custom plugins"
+
+    echo-info "Installing zsh-autosuggestions..."
+    git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+
+    echo-info "Installing zsh-syntax-highlighting"
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+fi
+
 echo-ok "...done"

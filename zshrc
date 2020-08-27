@@ -18,7 +18,7 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git adb encode64 extract)
+plugins=(git adb encode64 extract command-not-found zsh-autosuggestions zsh-syntax-highlighting)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -39,5 +39,7 @@ alias lv="java -jar ~/bin/log-viewer/LogViewer.jar"
 alias d2j="sh ~/bin/dex-tools-2.0/dex2jar-2.0/d2j-dex2jar.sh -f"
 alias python=python3
 
-screenfetch
 source $HOME/.config/broot/launcher/bash/br
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#888,underline"
+
+screenfetch
