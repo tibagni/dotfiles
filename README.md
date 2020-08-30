@@ -7,4 +7,5 @@ To install, simply clone this repo and run ./install.sh
  * __[tldr](https://tldr.sh/)__ - `A collection of simplified and community-driven man pages. (better and easier man pages)`
  * __[broot (br)](https://github.com/Canop/broot)__ - `A better way to navigate directories`
  * __[ripgrep (rg)](https://github.com/BurntSushi/ripgrep)__ - `A recursive line-oriented CLI search tool`
+ * __[Pop!Os Shell](https://github.com/pop-os/shell)__ - `Tiling window management for GNOME` [How to instal](https://www.linuxuprising.com/2020/05/how-to-install-pop-shell-tiling.html)
  
