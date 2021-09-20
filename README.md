@@ -10,3 +10,7 @@ To install, simply clone this repo and run ./install.sh
  * __[Pop!Os Shell](https://github.com/pop-os/shell)__ - `Tiling window management for GNOME` [How to instal](https://www.linuxuprising.com/2020/05/how-to-install-pop-shell-tiling.html)
  * __[fzf](https://github.com/junegunn/fzf)__ - `A command-line fuzzy finder`
  
+## VIM Plugins (managed by Vundle)
+* __[Vundle.vim](https://github.com/VundleVim/Vundle.vim)__ - `Plugin Manager`
+* __[YouCompleteMe](https://github.com/ycm-core/YouCompleteMe)__ - `Auto complete (requires compilation of core lib)`
+* __[NERDTree](https://github.com/preservim/nerdtree)__ - `File system explorer`

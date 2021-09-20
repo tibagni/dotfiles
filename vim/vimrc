@@ -1,6 +1,20 @@
 " How many lines of history VIM has to remember
 set history=100
 
+" All of plugins must be added here, before 'filetype plugin indent'
+if isdirectory(expand('~/.vim/bundle/Vundle.vim'))
+    set rtp+=~/.vim/bundle/Vundle.vim
+    call vundle#begin()
+
+    " let Vundle manage Vundle, required
+    Plugin 'VundleVim/Vundle.vim'
+
+    Plugin 'Valloric/YouCompleteMe'
+    Plugin 'preservim/nerdtree'
+
+    call vundle#end()
+endif
+
 " Filetype plugins
 filetype plugin on
 filetype indent on
@@ -100,6 +114,9 @@ map <leader>. :%s/\s\+$//g<CR>
 
 " Map <leader>; to Highlight trailing spaces
 map <leader>; :/\s\+$<CR>
+
+" NERDTree mappings
+nnoremap <leader>n :NERDTreeFocus<CR>
 
 " Use CSyntaxAfter plugin for syntax highlight on C-like languages
 autocmd! FileType c,cpp,java,php call CSyntaxAfter()

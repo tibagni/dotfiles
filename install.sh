@@ -56,4 +56,16 @@ then
     git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
 fi
 
+# install vundle for vim plugin management
+if [ -d ~/.vim ]
+then
+    echo-info "Installing vundle"
+
+    echo-info "Downloading..."
+    git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+
+    echo-info "Installing..."
+    vim +PluginInstall +qall
+fi
+
 echo-ok "...done"
