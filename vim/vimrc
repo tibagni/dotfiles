@@ -11,6 +11,7 @@ if isdirectory(expand('~/.vim/bundle/Vundle.vim'))
 
     Plugin 'Valloric/YouCompleteMe'
     Plugin 'preservim/nerdtree'
+    Plugin 'ctrlpvim/ctrlp.vim'
 
     call vundle#end()
 endif
@@ -116,7 +117,7 @@ map <leader>. :%s/\s\+$//g<CR>
 map <leader>; :/\s\+$<CR>
 
 " NERDTree mappings
-nnoremap <leader>n :NERDTreeFocus<CR>
+nnoremap <leader>n :NERDTreeFind<CR>
 
 " Use CSyntaxAfter plugin for syntax highlight on C-like languages
 autocmd! FileType c,cpp,java,php call CSyntaxAfter()
@@ -130,7 +131,26 @@ autocmd FileType gitcommit let &colorcolumn="72"
 hi clear EasyMotionShade
 hi link EasyMotionShade Comment
 
-"Rename tabs to show tab# and # of viewports
+" BEGIN NERDTree configs =========================
+" Start NERDTree and put the cursor back in the other window.
+autocmd VimEnter * NERDTree | wincmd p
+
+" Exit Vim if NERDTree is the only window remaining in the only tab.
+autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
+
+" Close the tab if NERDTree is the only window remaining in it.
+autocmd BufEnter * if winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
+
+" Open the existing NERDTree on each new tab.
+autocmd BufWinEnter * if getcmdwintype() == '' | silent NERDTreeMirror | endif
+" END NERDTree configs =========================
+
+
+" BEGIN ctrlp.vim configs =========================
+let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files -co --exclude-standard']
+" END ctrlp.vim configs =========================
+
+" Rename tabs to show tab# and # of viewports
 if exists("+showtabline")
     set tabpagemax=15
     hi TabLineSel term=bold cterm=underline,bold ctermfg=16 ctermbg=darkmagenta
