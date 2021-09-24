@@ -116,6 +116,10 @@ map <leader>. :%s/\s\+$//g<CR>
 " Map <leader>; to Highlight trailing spaces
 map <leader>; :/\s\+$<CR>
 
+" YouCompleteMe Jump To Definition
+nnoremap <leader>jd :YcmCompleter GoTo<CR>
+let g:ycm_enable_diagnostic_signs = 0
+
 " NERDTree mappings
 nnoremap <leader>nc :NERDTreeClose<CR>
 nnoremap <leader>nn :NERDTreeMirror<CR>:NERDTreeFind<CR>
