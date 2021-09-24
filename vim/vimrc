@@ -96,7 +96,7 @@ map <leader>ss :setlocal spell!<CR>
 map <leader>t :tabnew<CR>
 
 " Map <leader>g to perform vimgrep recursively
-map <leader>g :vimgrep  **/*<left><left><left><left><left>
+map <leader>g :vimgrep //g **/*<left><left><left><left><left><left><left>
 
 " Map <leader>f to perform 'fuzzy search like' on edit command
 map <leader>f :edit  **/*
@@ -149,6 +149,13 @@ autocmd BufWinEnter * if getcmdwintype() == '' | silent NERDTreeMirror | endif
 " BEGIN ctrlp.vim configs =========================
 let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files -co --exclude-standard']
 " END ctrlp.vim configs =========================
+
+" Automatically open quickfix after vimgrep
+augroup quickfix
+    autocmd!
+    autocmd QuickFixCmdPost [^1]* cwindow
+    autocmd QuickFixCmdPost 1* lwindow
+augroup END
 
 " Rename tabs to show tab# and # of viewports
 if exists("+showtabline")
