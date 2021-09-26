@@ -16,6 +16,8 @@ if isdirectory(expand('~/.vim/bundle/Vundle.vim'))
     call vundle#end()
 endif
 
+"==================== INSTALL GVIM (vim-gtk3) TO ENABLE CLIPBOARD FEATURES ====================
+
 " Filetype plugins
 filetype plugin on
 filetype indent on
@@ -123,6 +125,7 @@ let g:ycm_enable_diagnostic_signs = 0
 " NERDTree mappings
 nnoremap <leader>nc :NERDTreeClose<CR>
 nnoremap <leader>nn :NERDTreeMirror<CR>:NERDTreeFind<CR>
+nnoremap <leader>no :NERDTree<CR>
 " Start NERDTree and put the cursor back in the other window.
 " autocmd VimEnter * NERDTree | wincmd p
 " Exit Vim if NERDTree is the only window remaining in the only tab.
