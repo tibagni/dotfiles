@@ -121,6 +121,7 @@ map <leader>; :/\s\+$<CR>
 " YouCompleteMe Jump To Definition
 nnoremap <leader>jd :YcmCompleter GoTo<CR>
 let g:ycm_enable_diagnostic_signs = 0
+let g:ycm_autoclose_preview_window_after_insertion = 1
 
 " NERDTree mappings
 nnoremap <leader>nc :NERDTreeClose<CR>
