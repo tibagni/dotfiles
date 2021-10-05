@@ -122,6 +122,7 @@ map <leader>; :/\s\+$<CR>
 nnoremap <leader>jd :YcmCompleter GoTo<CR>
 nnoremap <leader>jr :YcmCompleter GoToReferences<CR>
 let g:ycm_enable_diagnostic_signs = 0
+let g:ycm_show_diagnostics_ui = 0
 let g:ycm_autoclose_preview_window_after_insertion = 1
 
 " NERDTree mappings
@@ -207,7 +208,10 @@ if exists("+showtabline")
                 let file = '[No Name]'
             endif
             let s .= file
-            let s .= (i == t ? '%m' : '')
+            "let s .= (i == t ? '%m' : '')
+            " Use below line t indicate whether a tab has been modified as it
+            " works not only for the current tabs, but for all
+            let s .= (getbufvar(buflist[winnr - 1], "&mod") ? '*' : '')
             let i = i + 1
         endwhile
         let s .= '%T%#TabLineFill#%='
