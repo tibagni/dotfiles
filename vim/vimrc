@@ -84,7 +84,7 @@ map <C-k> <C-W>k
 map <C-h> <C-W>h
 map <C-l> <C-W>l
 
-" With a map leader it's possible to do extra key combinations
+" With a map1leader it's possible to do extra key combinations
 " like <leader>w saves the current file
 let mapleader=","
 
@@ -98,7 +98,10 @@ map <leader>ss :setlocal spell!<CR>
 map <leader>t :tabnew<CR>
 
 " Map <leader>g to perform vimgrep recursively
-map <leader>g :vimgrep //g **/*<left><left><left><left><left><left><left>
+map <leader>g :vimgrep //gj **/*<left><left><left><left><left><left><left><left>
+
+" Map <leader>G  to perform vimgrep recursively only on git worktree
+map <leader>G :vimgrep //gj `git ls-files`<left><left><left><left><left><left><left><left><left><left><left><left><left><left><left><left><left><left>
 
 " Map <leader>f to perform 'fuzzy search like' on edit command
 map <leader>f :edit  **/*
