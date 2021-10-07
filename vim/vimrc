@@ -223,3 +223,14 @@ if exists("+showtabline")
     set stal=2
     set tabline=%!MyTabLine()
 endif
+
+" Map F2 to toggle quickfix window
+function! ToggleQuickFix()
+    if empty(filter(getwininfo(), 'v:val.quickfix'))
+        copen
+    else
+        cclose
+    endif
+endfunction
+
+nnoremap <silent> <F2> :call ToggleQuickFix()<cr>
