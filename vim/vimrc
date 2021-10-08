@@ -93,6 +93,9 @@ set cursorline
 " Set vertical split to open new window on the right
 set splitright
 
+" Enable mouse
+set mouse=a
+
 " Smart way to move between windows
 map <C-j> <C-W>j
 map <C-k> <C-W>k
