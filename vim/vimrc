@@ -18,6 +18,10 @@ endif
 
 "==================== INSTALL GVIM (vim-gtk3) TO ENABLE CLIPBOARD FEATURES ====================
 
+if (has("termguicolors"))
+    set termguicolors
+endif
+
 " Filetype plugins
 filetype plugin on
 filetype indent on
@@ -53,7 +57,7 @@ set smartcase
 syntax enable
 
 " Use solarized color scheme
-colorscheme badwolf
+colorscheme onedark
 
 " Use spaces for tabs
 set expandtab
