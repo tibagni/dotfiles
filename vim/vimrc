@@ -183,13 +183,6 @@ augroup END
 " Rename tabs to show tab# and # of viewports
 if exists("+showtabline")
     set tabpagemax=15
-    hi TabLineSel term=bold cterm=underline,bold ctermfg=16 ctermbg=darkmagenta
-    hi TabWinNumSel term=underline cterm=underline,bold ctermfg=90 ctermbg=darkmagenta
-    hi TabNumSel term=underline cterm=underline,bold ctermfg=16 ctermbg=darkmagenta
-
-    hi TabLine term=none cterm=none ctermfg=16 ctermbg=145
-    hi TabWinNum term=none cterm=none ctermfg=90 ctermbg=145
-    hi TabNum term=none cterm=none ctermfg=16 ctermbg=145
 
     function! MyTabLine()
         let s = ''
