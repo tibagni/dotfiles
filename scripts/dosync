@@ -1,0 +1,106 @@
+#!/bin/bash
+
+function print_usage() {
+    echo "Usage: dosync ACTION [REPO-NAME]"
+    echo
+    echo "Actions:"
+    echo "  to:    sync 'remote' folder to the server"
+    echo "  from:  sync from the server to the 'remote' folder"
+    echo
+    echo "Use REPO-NAME if more than one repo is specified in the '.sync.config' file"
+}
+
+function print_config_file_format() {
+    echo "format of .sync.conf file should be as follows:"
+    echo "    [repo_name1]=[ssh_url]"
+    echo "    [repo_name2]=[ssh_url]"
+    echo "    ..."
+}
+
+function print_error() {
+    printf "\033[0;31m"
+    echo "[!!] ERROR: $1"
+    printf "\033[0m"
+}
+
+function reset_mode() {
+    # Reset the mode of the files on server after rsync. On Windows, the files mode will be changed,
+    # so need to reset the mode on server after syncing the files
+    IFS=':' read -ra host <<< "$1"
+    #ssh ${host[0]} "cd ${host[1]} && git diff -p -R | grep -E \"^(diff|(old|new) mode)\" --color=never | git apply" 
+}
+
+if [ -z $1 ]
+then
+    print_error "missing ACTION"
+    print_usage
+    exit 1
+fi
+
+sync_mode="$1"
+if [ "$sync_mode" != "to" ] && [ "$sync_mode" != "from" ]
+then
+    print_error "Unknown ACTION: $sync_mode"
+    print_usage
+    exit 1
+fi
+
+num_repos=0
+if [ -f ".sync.conf" ]
+then
+    num_repos=$(wc -l .sync.conf | cut -d ' ' -f1)
+else
+    print_error "Missing .sync.conf file"
+    print_config_file_format
+    exit 1
+fi
+
+if [ $num_repos -lt 1 ]
+then
+    print_error "Invalid .sync.conf file"
+    print_config_file_format
+    exit 1
+fi
+
+selected_repo=$2
+if [ $num_repos -gt 1 ]
+then
+    if [ -z $selected_repo ]
+    then
+        echo "There is more than one repo in the config file, specify which repo to use"
+        print_usage
+        exit 1
+    fi
+else
+    # set the repo name by default
+    selected_repo=$(cat .sync.conf | cut -d '=' -f1)
+fi
+
+ssh_url=$(cat .sync.conf | grep "$selected_repo"= | cut -d '=' -f2)
+
+if [ -z $ssh_url ]
+then
+    print_error "could not find url for $selected_repo make sure the config file is properly formatted"
+    print_config_file_format
+    exit 1
+fi
+
+# At this point we have evrything we need, just run the command!
+if [ $sync_mode == "from" ]
+then
+    echo "Sync from $ssh_url to remote dir..."
+    # -p to ensure that the remote directory only gets created if it already does not exist
+    mkdir -p remote
+    rsync --progress -a --exclude '.git' $ssh_url/ remote
+else
+    echo "Sync content from remote dir to $ssh_url ..."
+    if [ ! -d remote ]
+    then
+        print_error "There is no remote folder to sync!"
+        exit 1
+    fi
+
+    cd remote
+    rsync --progress -a --no-perms --exclude '.git' --exclude '*.swp'  . $ssh_url
+    reset_mode
+fi

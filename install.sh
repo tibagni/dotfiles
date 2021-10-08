@@ -68,4 +68,13 @@ then
     vim +PluginInstall +qall
 fi
 
+# install scripts folder. Bakcup old folder if exists first
+if [ -d ~/scripts ]
+then
+    echo-info "Backing up old scripts folder..."
+    mv ~/scripts ~/dotfiles_old/scripts
+fi
+echo-info "Installing scripts..."
+ln -s $dir/scripts ~/scripts
+
 echo-ok "...done"
