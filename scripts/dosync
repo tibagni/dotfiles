@@ -27,7 +27,7 @@ function reset_mode() {
     # Reset the mode of the files on server after rsync. On Windows, the files mode will be changed,
     # so need to reset the mode on server after syncing the files
     IFS=':' read -ra host <<< "$1"
-    #ssh ${host[0]} "cd ${host[1]} && git diff -p -R | grep -E \"^(diff|(old|new) mode)\" --color=never | git apply" 
+    ssh ${host[0]} "cd ${host[1]} && git diff -p -R | grep -E \"^(diff|(old|new) mode)\" --color=never | git apply" 
 }
 
 if [ -z $1 ]
@@ -102,5 +102,4 @@ else
 
     cd remote
     rsync --progress -a --no-perms --exclude '.git' --exclude '*.swp'  . $ssh_url
-    reset_mode
 fi
