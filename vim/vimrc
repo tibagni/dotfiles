@@ -109,6 +109,14 @@ imap jk <Esc>
 " like <leader>w saves the current file
 let mapleader=" "
 
+" Clipborad mappings
+" <leader>y to yank to clipboard
+" <leader>p to paste from clipboard after the cursor
+" <leader>P to paste from clipboard before the cursor
+noremap <leader>y "+y
+noremap <leader>p "+p
+noremap <leader>P "+P
+
 " Map <leader>, to clear search highlight
 nnoremap <leader>, :nohlsearch<CR>
 
