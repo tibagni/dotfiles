@@ -43,4 +43,8 @@ alias python=python3
 source $HOME/.config/broot/launcher/bash/br
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#888,underline"
 
-screenfetch
+which neofetch > /dev/null
+if [ $? = 0 ]
+then
+    neofetch
+fi

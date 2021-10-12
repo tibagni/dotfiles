@@ -56,6 +56,9 @@ set smartcase
 " Enable syntax highlighting
 syntax enable
 
+" Disable swap files
+set noswapfile
+
 " Use solarized color scheme
 colorscheme onedark
 
