@@ -185,6 +185,15 @@ hi link EasyMotionShade Comment
 
 " BEGIN ctrlp.vim configs =========================
 let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files -co --exclude-standard']
+let g:ctrlp_buffer_func = { 'enter': 'CtrlPEnter', 'exit':  'CtrlPExit', }
+
+function CtrlPEnter()
+    hi CursorLine cterm=bold,italic
+endfunction
+
+function CtrlPExit()
+    hi CursorLine cterm=none
+endfunction
 " END ctrlp.vim configs =========================
 
 " Automatically open quickfix after vimgrep
