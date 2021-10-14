@@ -161,6 +161,9 @@ map <leader>. :%s/\s\+$//g<CR>
 " Map <leader>; to Highlight trailing spaces
 map <leader>; :/\s\+$<CR>
 
+" On visual select mode, press n will place a commad on normal mode
+vnoremap n :normal 
+
 " YouCompleteMe Jump To Definition
 nnoremap <leader>jd :YcmCompleter GoTo<CR>
 nnoremap <leader>jr :YcmCompleter GoToReferences<CR>
