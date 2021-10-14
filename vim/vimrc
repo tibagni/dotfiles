@@ -63,8 +63,12 @@ syntax enable
 " Disable swap files
 set noswapfile
 
-" Use solarized color scheme
-colorscheme onedark
+"colorscheme onedark
+colorscheme gruvbox
+"colorscheme nord
+"colorscheme badwolf
+set background=dark
+
 
 " Use spaces for tabs
 set expandtab
