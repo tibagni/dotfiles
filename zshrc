@@ -23,6 +23,16 @@ plugins=(git adb encode64 extract command-not-found zsh-autosuggestions zsh-synt
 
 source $ZSH/oh-my-zsh.sh
 
+# Enable fzf keybindings and fuzzy auto-completion for Zsh
+if [ -f /usr/share/doc/fzf/examples/key-bindings.zsh ]
+then
+    source /usr/share/doc/fzf/examples/key-bindings.zsh
+fi
+if [ -f /usr/share/doc/fzf/examples/completion.zsh ]
+then
+    source /usr/share/doc/fzf/examples/completion.zsh
+fi
+
 # User configuration
 
 function mkcd()
