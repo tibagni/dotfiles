@@ -18,6 +18,10 @@ endif
 
 "==================== INSTALL GVIM (vim-gtk3) TO ENABLE CLIPBOARD FEATURES ====================
 
+" remove menubar and toolbar of gvim
+set go -=m
+set go -=T
+
 if (has("termguicolors"))
     set termguicolors
 endif
