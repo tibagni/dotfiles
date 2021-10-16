@@ -36,7 +36,7 @@ echo "Changing to the $dir directory"
 cd $dir
 echo "...done"
 
-# move any existing dotfiles in homedir to dotfiles_old directory, then create symlinks 
+# move any existing dotfiles in homedir to dotfiles_old directory, then create symlinks
 for file in $files; do
     echo-info "Moving any existing dotfiles from ~ to $olddir"
     mv ~/.$file ~/dotfiles_old/

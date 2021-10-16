@@ -13,6 +13,8 @@ if isdirectory(expand('~/.vim/bundle/Vundle.vim'))
     Plugin 'preservim/nerdtree'
     Plugin 'ctrlpvim/ctrlp.vim'
     Plugin 'chrisbra/vim-commentary'
+    Plugin 'vim-airline/vim-airline'
+    Plugin 'tpope/vim-fugitive'
 
     call vundle#end()
 endif
@@ -267,16 +269,3 @@ function! ToggleQuickFix()
 endfunction
 
 nnoremap <silent> <F2> :call ToggleQuickFix()<cr>
-
-" Create ':G <pattern>' command for git grep
-func GitGrep(...)
-  let save = &grepprg
-  set grepprg=git\ grep\ -n\ $*
-  let s = 'grep'
-  for i in a:000
-    let s = s . ' ' . i
-  endfor
-  exe s
-  let &grepprg = save
-endfun
-command -nargs=? G call GitGrep(<f-args>)
