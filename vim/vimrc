@@ -137,12 +137,6 @@ map <leader>ss :setlocal spell!<CR>
 " Map <leader>t to open a new tab
 map <leader>t :tabnew<CR>
 
-" Map <leader>g to perform vimgrep recursively
-map <leader>g :vimgrep //gj **/*<left><left><left><left><left><left><left><left>
-
-" Map <leader>G  to perform vimgrep recursively only on git worktree
-map <leader>G :vimgrep //gj `git ls-files`<left><left><left><left><left><left><left><left><left><left><left><left><left><left><left><left><left><left>
-
 " Map <leader>f to perform 'fuzzy search like' on edit command
 map <leader>f :edit  **/*
 
@@ -273,3 +267,16 @@ function! ToggleQuickFix()
 endfunction
 
 nnoremap <silent> <F2> :call ToggleQuickFix()<cr>
+
+" Create ':G <pattern>' command for git grep
+func GitGrep(...)
+  let save = &grepprg
+  set grepprg=git\ grep\ -n\ $*
+  let s = 'grep'
+  for i in a:000
+    let s = s . ' ' . i
+  endfor
+  exe s
+  let &grepprg = save
+endfun
+command -nargs=? G call GitGrep(<f-args>)
