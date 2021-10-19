@@ -66,10 +66,15 @@ syntax enable
 " Disable swap files
 set noswapfile
 
-"colorscheme onedark
-colorscheme gruvbox
-"colorscheme nord
 "colorscheme badwolf
+colorscheme gruvbox
+"colorscheme inkpot
+"colorscheme molokai
+"colorscheme nord
+"colorscheme onedark
+"colorscheme onehalfdark
+"colorscheme tender
+
 set background=dark
 
 
