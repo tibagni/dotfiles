@@ -15,6 +15,7 @@ if isdirectory(expand('~/.vim/bundle/Vundle.vim'))
     Plugin 'chrisbra/vim-commentary'
     Plugin 'vim-airline/vim-airline'
     Plugin 'tpope/vim-fugitive'
+    Plugin 'sheerun/vim-polyglot'
 
     call vundle#end()
 endif
@@ -66,17 +67,18 @@ syntax enable
 " Disable swap files
 set noswapfile
 
+let g:material_theme_style = 'darker'
 "colorscheme badwolf
-colorscheme gruvbox
+"colorscheme gruvbox
 "colorscheme inkpot
 "colorscheme molokai
 "colorscheme nord
 "colorscheme onedark
 "colorscheme onehalfdark
 "colorscheme tender
+colorscheme material
 
 set background=dark
-
 
 " Use spaces for tabs
 set expandtab
