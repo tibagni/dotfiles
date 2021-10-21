@@ -16,6 +16,7 @@ if isdirectory(expand('~/.vim/bundle/Vundle.vim'))
     Plugin 'vim-airline/vim-airline'
     Plugin 'tpope/vim-fugitive'
     Plugin 'sheerun/vim-polyglot'
+    Plugin 'jiangmiao/auto-pairs'
 
     call vundle#end()
 endif
