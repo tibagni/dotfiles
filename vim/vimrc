@@ -70,16 +70,19 @@ set noswapfile
 
 let g:material_theme_style = 'darker'
 "colorscheme badwolf
-"colorscheme gruvbox
+colorscheme gruvbox
 "colorscheme inkpot
 "colorscheme molokai
 "colorscheme nord
 "colorscheme onedark
 "colorscheme onehalfdark
 "colorscheme tender
-colorscheme material
+"colorscheme material
 
 set background=dark
+if (!has("gui_running"))
+    hi Normal guibg=NONE ctermbg=NONE
+endif
 
 " Use spaces for tabs
 set expandtab
