@@ -133,6 +133,11 @@ imap jk <Esc>
 " With a map1leader it's possible to do extra key combinations
 let mapleader=" "
 
+" Map increment and decrement with the same bindings as spacemacs
+" (evil-numbers)
+map <leader>n= <C-a>
+map <leader>n- <C-x>
+
 " Clipborad mappings
 " <leader>y to yank to clipboard
 " <leader>p to paste from clipboard after the cursor
@@ -173,9 +178,9 @@ let g:ycm_show_diagnostics_ui = 0
 let g:ycm_autoclose_preview_window_after_insertion = 1
 
 " NERDTree mappings
-nnoremap <leader>nc :NERDTreeClose<CR>
-nnoremap <leader>nn :NERDTreeMirror<CR>:NERDTreeFind<CR>
-nnoremap <leader>no :NERDTree<CR>
+" 'SPC p t' is the 'project tree' command on spacemacs. Use the same here
+nnoremap <leader>pt :NERDTreeToggle<CR>
+
 " Start NERDTree and put the cursor back in the other window.
 " autocmd VimEnter * NERDTree | wincmd p
 " Exit Vim if NERDTree is the only window remaining in the only tab.
