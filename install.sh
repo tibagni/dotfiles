@@ -19,7 +19,7 @@ function print-files {
 ########## Variables
 dir=~/dotfiles         # dotfiles directory
 olddir=~/dotfiles_old  # old dotfiles backup directory
-files="zshrc vim tmux.conf ideavimrc"      # list of files/folders to symlink in homedir
+files="zshrc vim tmux.conf ideavimrc spacemacs"      # list of files/folders to symlink in homedir
 ##########
 
 echo ==================================================
