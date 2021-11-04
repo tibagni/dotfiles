@@ -519,6 +519,11 @@ It should only modify the values of Spacemacs settings."
 ;; for :nohl
 (spacemacs/set-leader-keys "," 'spacemacs/evil-search-clear-highlight)
 
+(with-eval-after-load 'evil
+  (defalias #'forward-evil-word #'forward-evil-symbol)
+  ;; make evil-search-word look for symbol rather than word boundaries
+  (setq-default evil-symbol-word-search t))
+
 (defun dotspacemacs/user-env ()
   "Environment variables setup.
 This function defines the environment variables for your Emacs session. By
