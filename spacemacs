@@ -41,6 +41,7 @@ This function should only modify configuration layer settings."
      ;; `M-m f e R' (Emacs style) to install them.
      ;; ----------------------------------------------------------------
      auto-completion
+     ;; themes-megapack
      better-defaults
      emacs-lisp
      git
@@ -547,6 +548,9 @@ before packages are loaded."
   ;; Map <leader>, to clear search highlights. this is the same as my vim mapping
   ;; for :nohl
   (spacemacs/set-leader-keys "," 'spacemacs/evil-search-clear-highlight)
+
+  ;; Enable fill column indicator by default
+  ;; (global-display-fill-column-indicator-mode)
 
   ;; Make 'w' behave like in VIM (where '-' and '_' are part of the word)
   (with-eval-after-load 'evil
