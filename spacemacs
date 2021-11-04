@@ -515,15 +515,6 @@ It should only modify the values of Spacemacs settings."
    ;; If non-nil then byte-compile some of Spacemacs files.
    dotspacemacs-byte-compile nil))
 
-;; Map <leader>, to clear search highlights. this is the same as my vim mapping
-;; for :nohl
-(spacemacs/set-leader-keys "," 'spacemacs/evil-search-clear-highlight)
-
-(with-eval-after-load 'evil
-  (defalias #'forward-evil-word #'forward-evil-symbol)
-  ;; make evil-search-word look for symbol rather than word boundaries
-  (setq-default evil-symbol-word-search t))
-
 (defun dotspacemacs/user-env ()
   "Environment variables setup.
 This function defines the environment variables for your Emacs session. By
@@ -552,7 +543,16 @@ dump.")
 This function is called at the very end of Spacemacs startup, after layer
 configuration.
 Put your configuration code here, except for variables that should be set
-before packages are loaded.")
+before packages are loaded."
+  ;; Map <leader>, to clear search highlights. this is the same as my vim mapping
+  ;; for :nohl
+  (spacemacs/set-leader-keys "," 'spacemacs/evil-search-clear-highlight)
+
+  ;; Make 'w' behave like in VIM (where '-' and '_' are part of the word)
+  (with-eval-after-load 'evil
+    (defalias #'forward-evil-word #'forward-evil-symbol)
+    ;; make evil-search-word look for symbol rather than word boundaries
+    (setq-default evil-symbol-word-search t)))
 
 
 ;; Do not write anything past this comment. This is where Emacs will
