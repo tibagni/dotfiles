@@ -127,8 +127,8 @@ map <C-k> <C-W>k
 map <C-h> <C-W>h
 map <C-l> <C-W>l
 
-" Use 'jk' quckly to get out of insert mode
-imap jk <Esc>
+" Use 'fd' quckly to get out of insert mode (same as spacemacs)
+imap fd <Esc>
 
 " With a map1leader it's possible to do extra key combinations
 let mapleader=" "
