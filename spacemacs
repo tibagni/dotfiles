@@ -58,7 +58,8 @@ This function should only modify configuration layer settings."
      spell-checking
      syntax-checking
      version-control
-     (treemacs :variables treemacs-use-icons-dired nil))
+     ;; (treemacs :variables treemacs-use-icons-dired nil)
+     neotree)
 
 
    ;; List of additional packages that will be installed without being wrapped
@@ -554,6 +555,8 @@ before packages are loaded."
   ;; Map <leader>, to clear search highlights. this is the same as my vim mapping
   ;; for :nohl
   (spacemacs/set-leader-keys "," 'spacemacs/evil-search-clear-highlight)
+
+  (setq neo-theme 'nerd)
 
   ;; Enable fill column indicator by default
   ;; (global-display-fill-column-indicator-mode)
