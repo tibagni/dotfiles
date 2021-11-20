@@ -561,6 +561,8 @@ before packages are loaded."
   ;; Enable fill column indicator by default
   ;; (global-display-fill-column-indicator-mode)
 
+  ;; Set escape keybinding to "jk"
+  (setq-default evil-escape-key-sequence "jk")
   ;; Make 'w' behave like in VIM (where '-' and '_' are part of the word)
   (with-eval-after-load 'evil
     (defalias #'forward-evil-word #'forward-evil-symbol)
