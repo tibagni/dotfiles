@@ -16,9 +16,9 @@ map Q gq
 
 map <leader>jd <action>(GotoImplementation)
 map <leader>jr <action>(GotoDeclaration)
-map <leader>g <action>(FindInPath)
-map <leader>G <action>(FindInPath)
+map <leader>/ <action>(FindInPath)
 set showmode
+
 "" -- Map IDE actions to IdeaVim -- https://jb.gg/abva4t
 "" Map \r to the Reformat Code action
 "map \r <Action>(ReformatCode)
@@ -28,6 +28,5 @@ set showmode
 
 "" Map \b to toggle the breakpoint on the current line
 "map \b <Action>(ToggleLineBreakpoint)
-
 
 " Find more examples here: https://jb.gg/share-ideavimrc
