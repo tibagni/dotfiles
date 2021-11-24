@@ -44,7 +44,7 @@ This function should only modify configuration layer settings."
      ;; `M-m f e R' (Emacs style) to install them.
      ;; ----------------------------------------------------------------
      auto-completion
-     themes-megapack
+     ;; themes-megapack
      better-defaults
      emacs-lisp
      git
