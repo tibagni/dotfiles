@@ -564,6 +564,9 @@ before packages are loaded."
 
   ;; Set escape keybinding to "jk"
   (setq-default evil-escape-key-sequence "jk")
+
+  (setq vc-follow-symlinks t)
+
   ;; Make 'w' behave like in VIM (where '-' and '_' are part of the word)
   (with-eval-after-load 'evil
     (defalias #'forward-evil-word #'forward-evil-symbol)
