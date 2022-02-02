@@ -21,6 +21,8 @@ if isdirectory(expand('~/.vim/bundle/Vundle.vim'))
     call vundle#end()
 endif
 
+set belloff=all
+
 "==================== INSTALL GVIM (vim-gtk3) TO ENABLE CLIPBOARD FEATURES ====================
 
 " remove menubar and toolbar of gvim
