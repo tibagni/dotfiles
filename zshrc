@@ -50,6 +50,14 @@ alias lv="java -jar ~/bin/log-viewer/LogViewer.jar"
 alias d2j="sh ~/bin/dex-tools-2.0/dex2jar-2.0/d2j-dex2jar.sh -f"
 alias python=python3
 
+if grep -qi microsoft /proc/version; then
+    echo "Configuring Windows aliases"
+    alias adb=adb.exe
+    alias fastboot=fastboot.exe
+    alias explorer="explorer.exe"
+    alias lv='java.exe -jar "C:\Program Files\LogViewer\LogViewer-all.jar"'
+fi
+
 source $HOME/.config/broot/launcher/bash/br
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#888,underline"
 
