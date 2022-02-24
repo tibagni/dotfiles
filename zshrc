@@ -58,7 +58,7 @@ if grep -qi microsoft /proc/version; then
     alias lv='java.exe -jar "C:\Program Files\LogViewer\LogViewer-all.jar"'
     # Configure the display to run Linux GUI apps on WSL 2 (Windows 10)
     export DISPLAY="`grep nameserver /etc/resolv.conf | sed 's/nameserver //'`:0"
-    if [ ! -f ~/.xsession ];
+    if [ ! -f ~/.xsession ]
     then
         echo xfce4-session > ~/.xsession
     fi
