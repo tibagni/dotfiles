@@ -9,7 +9,6 @@ if isdirectory(expand('~/.vim/bundle/Vundle.vim'))
     " let Vundle manage Vundle, required
     Plugin 'VundleVim/Vundle.vim'
 
-    Plugin 'Valloric/YouCompleteMe'
     Plugin 'preservim/nerdtree'
     Plugin 'ctrlpvim/ctrlp.vim'
     Plugin 'chrisbra/vim-commentary'
