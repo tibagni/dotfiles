@@ -64,7 +64,7 @@ if grep -qi microsoft /proc/version; then
     fi
 fi
 
-source $HOME/.config/broot/launcher/bash/br
+[ -f $HOME/.config/broot/launcher/bash/br ] && source $HOME/.config/broot/launcher/bash/br
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#888,underline"
 
 which neofetch > /dev/null
@@ -72,3 +72,5 @@ if [ $? = 0 ]
 then
     neofetch
 fi
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
