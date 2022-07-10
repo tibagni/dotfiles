@@ -1,5 +1,6 @@
 # If you come from bash you might have to change your $PATH.
 export PATH=$HOME/bin:$HOME/scripts:/usr/local/bin:$HOME/dotfiles/scripts:$PATH
+export PATH=$HOME/.local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
 export ZSH=$HOME/.oh-my-zsh
@@ -48,7 +49,6 @@ then
 fi
 alias lv="java -jar ~/bin/log-viewer/LogViewer.jar"
 alias d2j="sh ~/bin/dex-tools-2.0/dex2jar-2.0/d2j-dex2jar.sh -f"
-alias python=python3
 
 if grep -qi microsoft /proc/version; then
     echo "Configuring Windows aliases"
