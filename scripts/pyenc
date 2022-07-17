@@ -1,0 +1,81 @@
+#! /usr/bin/python3
+import sys
+
+from typing import Dict, List, Optional, Callable
+
+_COMMAND_FUNC = Callable[[bytes, bytes], bytes]
+
+_commands: Dict[str, _COMMAND_FUNC] = {}
+
+def encrypt(original_data: bytes, key: bytes) -> bytes:
+    if len(original_data) != len(key):
+        raise ValueError("Key and data must have the same length")
+
+    product: int = int.from_bytes(original_data, "big") ^ int.from_bytes(key, "big")
+    return product.to_bytes((product.bit_length() + 7) // 8, "big")
+
+def decrypt(encrypted_data: bytes, key: bytes) -> bytes:
+    if len(encrypted_data) != len(key):
+        raise ValueError("Key and data must have the same length")
+
+    product: int = int.from_bytes(encrypted_data, "big") ^ int.from_bytes(key, "big")
+    return product.to_bytes((product.bit_length() + 7) // 8, "big")
+
+def _make_key_for(original_data: bytes, key: str) -> bytes:
+    key_bytes: bytes = key.encode()
+    orig_len: int = len(original_data)
+    key_len: int = len(key_bytes)
+
+    if orig_len == key_len:
+        return key_bytes
+    if orig_len < key_len:
+        return key_bytes[:orig_len]
+
+    # fill the key so it has the same size as the input data
+    result_key_bytes: bytes = key_bytes * ((orig_len // key_len) + 1)
+    return result_key_bytes[:orig_len]
+
+def print_usage(program_name: str):
+    print(f"Usage: {program_name} [enc|dec] <filename> -key <key>", file=sys.stderr)
+
+if __name__ == "__main__":
+    _commands["enc"] = encrypt
+    _commands["dec"] = decrypt
+
+    program_name: str = sys.argv[0]
+    args: List[str] = sys.argv[1:]
+    if not args:
+        print("Missing command", file=sys.stderr)
+        print_usage(program_name)
+        exit(1)
+
+    cmd: str = args.pop(0)
+    if cmd not in _commands.keys():
+        print(f"Invalid command: {cmd}", file=sys.stderr)
+        print_usage(program_name)
+        exit(1)
+
+    key: Optional[str] = None
+    filename: Optional[str] = None
+    while args:
+        arg: str = args.pop(0)
+        if arg == "-key":
+            key = args.pop(0)
+        else:
+            filename = arg
+        if key and filename:
+            break
+
+    if not key or not filename:
+        print("Missing args", file=sys.stderr)
+        print_usage(program_name)
+        exit(1)
+
+    with open(filename, "rb") as reader:
+        content: bytes = reader.read()
+
+    final_key: bytes = _make_key_for(content, key)
+    product: bytes = _commands[cmd](content, final_key)
+    # enc_data: bytes = encrypt(content, final_key)
+    with open(f"{filename}.{cmd}", "wb") as writter:
+        writter.write(product)
