@@ -59,6 +59,7 @@ This function should only modify configuration layer settings."
      spell-checking
      syntax-checking
      version-control
+     kotlin
      ;; (treemacs :variables treemacs-use-icons-dired nil)
      neotree)
 
