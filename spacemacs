@@ -38,6 +38,8 @@ This function should only modify configuration layer settings."
      vimscript
      markdown
      python
+     kotlin
+     java
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press `SPC f e R' (Vim style) or
@@ -49,8 +51,7 @@ This function should only modify configuration layer settings."
      emacs-lisp
      git
      helm
-     ;; lsp
-     ;; markdown
+     lsp
      multiple-cursors
      ;; org
      ;; (shell :variables
@@ -59,7 +60,6 @@ This function should only modify configuration layer settings."
      spell-checking
      syntax-checking
      version-control
-     kotlin
      ;; (treemacs :variables treemacs-use-icons-dired nil)
      neotree)
 
