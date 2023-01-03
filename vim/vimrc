@@ -180,7 +180,16 @@ let g:ycm_autoclose_preview_window_after_insertion = 1
 
 " NERDTree mappings
 " 'SPC p t' is the 'project tree' command on spacemacs. Use the same here
-nnoremap <leader>pt :NERDTreeToggle<CR>
+function! NerdTreeToggleFind()
+    if exists("g:NERDTree") && g:NERDTree.IsOpen()
+        NERDTreeClose
+    elseif filereadable(expand('%'))
+        NERDTreeFind
+    else
+        NERDTree
+    endif
+endfunction
+nnoremap <leader>pt :call NerdTreeToggleFind()<CR>
 
 " Start NERDTree and put the cursor back in the other window.
 " autocmd VimEnter * NERDTree | wincmd p
