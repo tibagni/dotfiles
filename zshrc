@@ -48,7 +48,7 @@ then
     alias open=xdg-open
 fi
 alias lv="java -jar ~/bin/log-viewer/LogViewer.jar"
-alias d2j="sh ~/bin/dex-tools-2.0/dex2jar-2.0/d2j-dex2jar.sh -f"
+alias d2j="sh ~/bin/dex-tools/dex2jar/d2j-dex2jar.sh -f"
 
 if grep -qi microsoft /proc/version; then
     echo "Configuring Windows aliases"
@@ -74,3 +74,12 @@ then
 fi
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# Include local configs if they exist
+if [[ -f ~/local_zshrc ]]; then
+    source ~/local_zshrc
+fi
