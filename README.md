@@ -9,7 +9,7 @@ To install, simply clone this repo and run ./install.sh
  * __[ripgrep (rg)](https://github.com/BurntSushi/ripgrep)__ - `A recursive line-oriented CLI search tool`
  * __[Pop!Os Shell](https://github.com/pop-os/shell)__ - `Tiling window management for GNOME` [How to instal](https://www.linuxuprising.com/2020/05/how-to-install-pop-shell-tiling.html)
  * __[fzf](https://github.com/junegunn/fzf)__ - `A command-line fuzzy finder`
- * __[delta](https://github.com/dandavison/delta) - `A syntax-highlighting pager for git, diff, grep, rg --json, and blame output`
+ * __[delta](https://github.com/dandavison/delta)__ - `A syntax-highlighting pager for git, diff, grep, rg --json, and blame output`
  
 ## VIM Plugins (managed by Vundle)
 * __[Vundle.vim](https://github.com/VundleVim/Vundle.vim)__ - `Plugin Manager`
