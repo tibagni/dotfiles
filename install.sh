@@ -16,6 +16,8 @@ olddir=~/dotfiles_old                                 # old dotfiles backup dire
 files="vim tmux.conf ideavimrc spacemacs"             # list of files/folders to symlink in homedir
 ##########
 
+missing_tools=0
+
 function check_tool {
     local name="$1"
     local cmd="$2"
@@ -27,6 +29,21 @@ function check_tool {
         echo-ok "$(printf "%-14s - %s" "$name" "$path")"
     else
         echo-miss "$(printf "%-14s - Not installed (%s)" "$name" "$url")"
+        missing_tools=$((missing_tools + 1))
+    fi
+}
+
+function run_if_installed {
+    local tool="$1"
+    local on_installed="$2"
+    local on_missing="$3"
+
+    if command -v "$tool" >/dev/null 2>&1; then
+        eval "$on_installed"
+    elif [ -n "$on_missing" ]; then
+        eval "$on_missing"
+    else
+        echo-skip "$tool not installed, skipping"
     fi
 }
 
@@ -59,21 +76,25 @@ function link_file {
     echo-ok "Linked $dst"
 }
 
-echo ==================================================
-echo Dotfiles
-echo ==================================================
+function unlink_file {
+    local src="$1"
+    local dst="$2"
+    local tool="$3"
 
-# Symlink core dotfiles
-for file in $files; do
-    link_file "$dir/$file" ~/."$file"
-done
+    if [ -L "$dst" ] && [ "$(readlink -f "$dst")" = "$(readlink -f "$src")" ]; then
+        echo-info "Removing unused $dst symlink ($tool is not installed)..."
+        rm "$dst"
+        echo-ok "Removed $dst symlink"
+    else
+        echo-skip "$tool not installed, skipping $dst"
+    fi
+}
 
-# Only configure zsh and oh-my-zsh plugins if zsh is installed
-if command -v zsh >/dev/null 2>&1; then
+function setup_zsh {
     link_file "$dir/zshrc" ~/.zshrc
 
     if [ -d ~/.oh-my-zsh ]; then
-        zsh_custom="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
+        local zsh_custom="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
 
         if [ ! -d "$zsh_custom/plugins/zsh-autosuggestions" ]; then
             echo-info "Installing zsh-autosuggestions..."
@@ -93,18 +114,9 @@ if command -v zsh >/dev/null 2>&1; then
     else
         echo-skip "oh-my-zsh not found, skipping zsh plugins"
     fi
-else
-    if [ -L ~/.zshrc ] && [ "$(readlink -f ~/.zshrc)" = "$(readlink -f "$dir/zshrc")" ]; then
-        echo-info "Removing unused ~/.zshrc symlink (zsh is not installed)..."
-        rm ~/.zshrc
-        echo-ok "Removed ~/.zshrc symlink"
-    else
-        echo-skip "zsh not installed, skipping zsh setup"
-    fi
-fi
+}
 
-# Install Vundle for vim plugin management
-if command -v vim >/dev/null 2>&1; then
+function setup_vim {
     if [ ! -d ~/.vim/bundle/Vundle.vim ]; then
         echo-info "Installing Vundle..."
         git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
@@ -114,14 +126,29 @@ if command -v vim >/dev/null 2>&1; then
     else
         echo-skip "Vundle already installed"
     fi
-else
-    echo-skip "vim not installed, skipping Vundle"
-fi
+}
 
-# Install scripts folder
+function setup_git {
+    if ! git config --global --get-all include.path | grep -Fxq "$dir/gitconfig"; then
+        echo-info "Adding $dir/gitconfig to ~/.gitconfig..."
+        git config --global --add include.path "$dir/gitconfig"
+        echo-ok "Added $dir/gitconfig to ~/.gitconfig"
+    else
+        echo-skip "$dir/gitconfig already included in ~/.gitconfig"
+    fi
+}
+
+echo ==================================================
+echo Dotfiles
+echo ==================================================
+
+# Symlink core dotfiles
+for file in $files; do
+    link_file "$dir/$file" ~/."$file"
+done
+
+# Install scripts folder and ensure ~/scripts is in PATH for bash environments
 link_file "$dir/scripts" ~/scripts "scripts"
-
-# Ensure ~/scripts is in PATH for bash environments
 if [ -f ~/.bashrc ]; then
     if ! grep -q 'HOME/scripts' ~/.bashrc && ! grep -q '~/scripts' ~/.bashrc; then
         echo-info "Adding ~/scripts to PATH in ~/.bashrc..."
@@ -132,21 +159,15 @@ if [ -f ~/.bashrc ]; then
     fi
 fi
 
-# Install herdr config
-link_file "$dir/herdr/config.toml" ~/.config/herdr/config.toml "herdr_config.toml"
-
-# Include shared gitconfig in ~/.gitconfig
-if command -v git >/dev/null 2>&1; then
-    if ! git config --global --get-all include.path | grep -Fxq "$dir/gitconfig"; then
-        echo-info "Adding $dir/gitconfig to ~/.gitconfig..."
-        git config --global --add include.path "$dir/gitconfig"
-        echo-ok "Added $dir/gitconfig to ~/.gitconfig"
-    else
-        echo-skip "$dir/gitconfig already included in ~/.gitconfig"
-    fi
-else
-    echo-skip "git not installed, skipping gitconfig"
-fi
+# Tool-specific configurations (run command A if installed, command B if not)
+run_if_installed "zsh"     "setup_zsh" \
+                           "unlink_file \"$dir/zshrc\" ~/.zshrc zsh"
+run_if_installed "vim"     "setup_vim"
+run_if_installed "herdr"   "link_file \"$dir/herdr/config.toml\" ~/.config/herdr/config.toml herdr_config.toml" \
+                           "unlink_file \"$dir/herdr/config.toml\" ~/.config/herdr/config.toml herdr"
+run_if_installed "lazygit" "link_file \"$dir/lazygit/config.yml\" ~/.config/lazygit/config.yml lazygit_config.yml" \
+                           "unlink_file \"$dir/lazygit/config.yml\" ~/.config/lazygit/config.yml lazygit"
+run_if_installed "git"     "setup_git"
 
 echo-ok "...done"
 echo
@@ -160,5 +181,9 @@ check_tool "ripgrep (rg)" "rg"       "https://github.com/BurntSushi/ripgrep"
 check_tool "fzf"          "fzf"      "https://github.com/junegunn/fzf"
 check_tool "delta"        "delta"    "https://github.com/dandavison/delta"
 check_tool "herdr"        "herdr"    "https://herdr.dev/"
+check_tool "lazygit"      "lazygit"  "https://github.com/jesseduffield/lazygit"
 
-
+if [ "$missing_tools" -gt 0 ]; then
+    echo
+    echo-info "If you want to install a new tool from the list, just do it and run ./install.sh one more time."
+fi

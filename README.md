@@ -10,6 +10,7 @@ To install, simply clone this repo and run ./install.sh
  * __[fzf](https://github.com/junegunn/fzf)__ - `A command-line fuzzy finder`
  * __[delta](https://github.com/dandavison/delta)__ - `A syntax-highlighting pager for git, diff, grep, rg --json, and blame output`
  * __[herdr](https://herdr.dev/)__ - `A terminal multiplexer like tmux, with built-in support for AI agents`
+ * __[lazygit](https://github.com/jesseduffield/lazygit)__ - `A simple terminal UI for git commands`
  
 ## VIM Plugins (managed by Vundle)
 * __[Vundle.vim](https://github.com/VundleVim/Vundle.vim)__ - `Plugin Manager`
