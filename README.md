@@ -7,7 +7,6 @@ To install, simply clone this repo and run ./install.sh
  * __[tldr](https://tldr.sh/)__ - `A collection of simplified and community-driven man pages. (better and easier man pages)`
  * __[broot (br)](https://github.com/Canop/broot)__ - `A better way to navigate directories`
  * __[ripgrep (rg)](https://github.com/BurntSushi/ripgrep)__ - `A recursive line-oriented CLI search tool`
- * __[Pop!Os Shell](https://github.com/pop-os/shell)__ - `Tiling window management for GNOME` [How to instal](https://www.linuxuprising.com/2020/05/how-to-install-pop-shell-tiling.html)
  * __[fzf](https://github.com/junegunn/fzf)__ - `A command-line fuzzy finder`
  * __[delta](https://github.com/dandavison/delta)__ - `A syntax-highlighting pager for git, diff, grep, rg --json, and blame output`
  * __[herdr](https://herdr.dev/)__ - `A terminal multiplexer like tmux, with built-in support for AI agents`

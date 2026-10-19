@@ -1,7 +1,7 @@
 [color]
     ui = auto
 [core]
-    pager = delta
+    pager = "sh -c 'command -v delta >/dev/null 2>&1 && exec delta || exec less -FRX'"
 [alias]
     lol = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
 [delta]
@@ -9,6 +9,6 @@
     navigate = true
     dark = true
 [interactive]
-    diffFilter = delta --color-only
+    diffFilter = "sh -c 'command -v delta >/dev/null 2>&1 && exec delta --color-only || exec cat'"
 [merge]
     conflictStyle = zdiff3

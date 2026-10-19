@@ -8,12 +8,27 @@
 function echo-ok   { printf "\r\033[2K\033[0;32m[ OK ]\033[0m %s\n" "$*"; }
 function echo-skip { printf "\r\033[2K\033[38;05;240m[SKIP]\033[0m %s\n" "$*"; }
 function echo-info { printf "\r\033[2K\033[0;34m[ .. ]\033[0m %s\n" "$*"; }
+function echo-miss { printf "\r\033[2K\033[0;33m[MISS]\033[0m %s\n" "$*"; }
 
 ########## Variables
 dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"  # dotfiles directory
 olddir=~/dotfiles_old                                 # old dotfiles backup directory
 files="vim tmux.conf ideavimrc spacemacs"             # list of files/folders to symlink in homedir
 ##########
+
+function check_tool {
+    local name="$1"
+    local cmd="$2"
+    local url="$3"
+    local path
+
+    path="$(command -v "$cmd" 2>/dev/null)"
+    if [ -n "$path" ]; then
+        echo-ok "$(printf "%-14s - %s" "$name" "$path")"
+    else
+        echo-miss "$(printf "%-14s - Not installed (%s)" "$name" "$url")"
+    fi
+}
 
 function link_file {
     local src="$1"
@@ -134,4 +149,16 @@ else
 fi
 
 echo-ok "...done"
+echo
+echo ==================================================
+echo Recommended Terminal Tools
+echo ==================================================
+check_tool "neofetch"     "neofetch" "https://github.com/dylanaraps/neofetch"
+check_tool "tldr"         "tldr"     "https://tldr.sh/"
+check_tool "broot (br)"   "broot"    "https://github.com/Canop/broot"
+check_tool "ripgrep (rg)" "rg"       "https://github.com/BurntSushi/ripgrep"
+check_tool "fzf"          "fzf"      "https://github.com/junegunn/fzf"
+check_tool "delta"        "delta"    "https://github.com/dandavison/delta"
+check_tool "herdr"        "herdr"    "https://herdr.dev/"
+
 
