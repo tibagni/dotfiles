@@ -1,90 +1,118 @@
 #!/bin/bash
 ############################
-# .install.sh
+# install.sh
 # This script creates symlinks from the home directory to any desired dotfiles in ~/dotfiles
 # from http://blog.smalleycreative.com/tutorials/using-git-and-github-to-manage-your-dotfiles/
 ############################
 
-function echo-option    { printf "\r\033[2K\033[0;36m  -> \033[0m %s\n" "$*"; }
-function echo-ok        { printf "\r\033[2K\033[0;32m[ OK ]\033[0m %s\n" "$*"; }
-function echo-skip      { printf "\r\033[2K\033[38;05;240m[SKIP]\033[0m %s\n" "$*"; }
-function echo-info      { printf "\r\033[2K\033[0;34m[ .. ]\033[0m %s\n" "$*"; }
-function print-files {
-    for file in $(ls $1)
-    do
-        echo-info "    $file "
-    done
-}
+function echo-ok   { printf "\r\033[2K\033[0;32m[ OK ]\033[0m %s\n" "$*"; }
+function echo-skip { printf "\r\033[2K\033[38;05;240m[SKIP]\033[0m %s\n" "$*"; }
+function echo-info { printf "\r\033[2K\033[0;34m[ .. ]\033[0m %s\n" "$*"; }
 
 ########## Variables
-dir=~/dotfiles         # dotfiles directory
-olddir=~/dotfiles_old  # old dotfiles backup directory
-files="zshrc vim tmux.conf ideavimrc spacemacs"      # list of files/folders to symlink in homedir
+dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"  # dotfiles directory
+olddir=~/dotfiles_old                                 # old dotfiles backup directory
+files="vim tmux.conf ideavimrc spacemacs"             # list of files/folders to symlink in homedir
 ##########
+
+function link_file {
+    local src="$1"
+    local dst="$2"
+    local backup_name="${3:-$(basename "$dst")}"
+
+    mkdir -p "$(dirname "$dst")"
+
+    # Skip if already symlinked to the exact target
+    if [ -L "$dst" ] && [ "$(readlink -f "$dst")" = "$(readlink -f "$src")" ]; then
+        echo-skip "$dst already linked"
+        return
+    fi
+
+    # Backup existing file, directory, or symlink before replacing
+    if [ -e "$dst" ] || [ -L "$dst" ]; then
+        mkdir -p "$olddir"
+        local backup_path="$olddir/$backup_name"
+        if [ -e "$backup_path" ] || [ -L "$backup_path" ]; then
+            backup_path="${backup_path}.$(date +%Y%m%d_%H%M%S)"
+        fi
+        echo-info "Backing up $dst to $backup_path"
+        mv "$dst" "$backup_path"
+    fi
+
+    echo-info "Creating symlink $dst -> $src"
+    ln -s "$src" "$dst"
+    echo-ok "Linked $dst"
+}
 
 echo ==================================================
 echo Dotfiles
 echo ==================================================
 
-# create dotfiles_old in homedir
-echo-info "Creating $olddir for backup of any existing dotfiles in ~"
-mkdir -p $olddir
-echo-ok "...done"
-
-# change to the dotfiles directory
-echo "Changing to the $dir directory"
-cd $dir
-echo "...done"
-
-# move any existing dotfiles in homedir to dotfiles_old directory, then create symlinks
+# Symlink core dotfiles
 for file in $files; do
-    echo-info "Moving any existing dotfiles from ~ to $olddir"
-    mv ~/.$file ~/dotfiles_old/
-    echo-info "Creating symlink to $file in home directory."
-    ln -s $dir/$file ~/.$file
+    link_file "$dir/$file" ~/."$file"
 done
 
-# install oh-my-zsh custom plugins
-if [ -d ~/.oh-my-zsh ]
-then
-    echo-info "Installing oh-my-zsh custom plugins"
+# Only configure zsh and oh-my-zsh plugins if zsh is installed
+if command -v zsh >/dev/null 2>&1; then
+    link_file "$dir/zshrc" ~/.zshrc
 
-    echo-info "Installing zsh-autosuggestions..."
-    git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+    if [ -d ~/.oh-my-zsh ]; then
+        zsh_custom="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
 
-    echo-info "Installing zsh-syntax-highlighting"
-    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+        if [ ! -d "$zsh_custom/plugins/zsh-autosuggestions" ]; then
+            echo-info "Installing zsh-autosuggestions..."
+            git clone https://github.com/zsh-users/zsh-autosuggestions "$zsh_custom/plugins/zsh-autosuggestions"
+            echo-ok "Installed zsh-autosuggestions"
+        else
+            echo-skip "zsh-autosuggestions already installed"
+        fi
+
+        if [ ! -d "$zsh_custom/plugins/zsh-syntax-highlighting" ]; then
+            echo-info "Installing zsh-syntax-highlighting..."
+            git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$zsh_custom/plugins/zsh-syntax-highlighting"
+            echo-ok "Installed zsh-syntax-highlighting"
+        else
+            echo-skip "zsh-syntax-highlighting already installed"
+        fi
+    else
+        echo-skip "oh-my-zsh not found, skipping zsh plugins"
+    fi
+else
+    echo-skip "zsh not installed, skipping zsh setup"
 fi
 
-# install vundle for vim plugin management
-if [ -d ~/.vim ]
-then
-    echo-info "Installing vundle"
-
-    echo-info "Downloading..."
-    git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
-
-    echo-info "Installing..."
-    vim +PluginInstall +qall
+# Install Vundle for vim plugin management
+if command -v vim >/dev/null 2>&1; then
+    if [ ! -d ~/.vim/bundle/Vundle.vim ]; then
+        echo-info "Installing Vundle..."
+        git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+        echo-info "Installing Vim plugins..."
+        vim +PluginInstall +qall
+        echo-ok "Installed Vundle and Vim plugins"
+    else
+        echo-skip "Vundle already installed"
+    fi
+else
+    echo-skip "vim not installed, skipping Vundle"
 fi
 
-# install scripts folder. Bakcup old folder if exists first
-if [ -d ~/scripts ]
-then
-    echo-info "Backing up old scripts folder..."
-    mv ~/scripts ~/dotfiles_old/scripts
-fi
-echo-info "Installing scripts..."
-ln -s $dir/scripts ~/scripts
+# Install scripts folder
+link_file "$dir/scripts" ~/scripts "scripts"
 
-# install herdr config. Backup old config if exists first
-mkdir -p ~/.config/herdr
-if [ -f ~/.config/herdr/config.toml ] || [ -L ~/.config/herdr/config.toml ]
-then
-    echo-info "Backing up old herdr config.toml..."
-    mv ~/.config/herdr/config.toml ~/dotfiles_old/herdr_config.toml
+# Ensure ~/scripts is in PATH for bash environments
+if [ -f ~/.bashrc ]; then
+    if ! grep -q 'HOME/scripts' ~/.bashrc && ! grep -q '~/scripts' ~/.bashrc; then
+        echo-info "Adding ~/scripts to PATH in ~/.bashrc..."
+        printf '\n# Add dotfiles scripts to PATH\nexport PATH="$HOME/scripts:$PATH"\n' >> ~/.bashrc
+        echo-ok "Added ~/scripts to ~/.bashrc"
+    else
+        echo-skip "~/scripts already in ~/.bashrc"
+    fi
 fi
-echo-info "Installing herdr config..."
-ln -s $dir/herdr/config.toml ~/.config/herdr/config.toml
+
+# Install herdr config
+link_file "$dir/herdr/config.toml" ~/.config/herdr/config.toml "herdr_config.toml"
 
 echo-ok "...done"
+
