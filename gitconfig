@@ -1,0 +1,14 @@
+[color]
+    ui = auto
+[core]
+    pager = delta
+[alias]
+    lol = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+[delta]
+    side-by-side = true
+    navigate = true
+    dark = true
+[interactive]
+    diffFilter = delta --color-only
+[merge]
+    conflictStyle = zdiff3

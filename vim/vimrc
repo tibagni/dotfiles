@@ -290,3 +290,8 @@ function! ToggleQuickFix()
 endfunction
 
 nnoremap <silent> <F2> :call ToggleQuickFix()<cr>
+
+" Include local vim configs if they exist
+if filereadable(expand("~/.vimrc.local"))
+    source ~/.vimrc.local
+endif

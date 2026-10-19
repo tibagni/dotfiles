@@ -79,7 +79,13 @@ if command -v zsh >/dev/null 2>&1; then
         echo-skip "oh-my-zsh not found, skipping zsh plugins"
     fi
 else
-    echo-skip "zsh not installed, skipping zsh setup"
+    if [ -L ~/.zshrc ] && [ "$(readlink -f ~/.zshrc)" = "$(readlink -f "$dir/zshrc")" ]; then
+        echo-info "Removing unused ~/.zshrc symlink (zsh is not installed)..."
+        rm ~/.zshrc
+        echo-ok "Removed ~/.zshrc symlink"
+    else
+        echo-skip "zsh not installed, skipping zsh setup"
+    fi
 fi
 
 # Install Vundle for vim plugin management
@@ -113,6 +119,19 @@ fi
 
 # Install herdr config
 link_file "$dir/herdr/config.toml" ~/.config/herdr/config.toml "herdr_config.toml"
+
+# Include shared gitconfig in ~/.gitconfig
+if command -v git >/dev/null 2>&1; then
+    if ! git config --global --get-all include.path | grep -Fxq "$dir/gitconfig"; then
+        echo-info "Adding $dir/gitconfig to ~/.gitconfig..."
+        git config --global --add include.path "$dir/gitconfig"
+        echo-ok "Added $dir/gitconfig to ~/.gitconfig"
+    else
+        echo-skip "$dir/gitconfig already included in ~/.gitconfig"
+    fi
+else
+    echo-skip "git not installed, skipping gitconfig"
+fi
 
 echo-ok "...done"
 
