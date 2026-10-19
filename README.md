@@ -14,7 +14,6 @@ To install, simply clone this repo and run ./install.sh
  
 ## VIM Plugins (managed by Vundle)
 * __[Vundle.vim](https://github.com/VundleVim/Vundle.vim)__ - `Plugin Manager`
-* __[YouCompleteMe](https://github.com/ycm-core/YouCompleteMe)__ - `Auto complete (requires compilation of core lib)`
 * __[NERDTree](https://github.com/preservim/nerdtree)__ - `File system explorer`
 
 

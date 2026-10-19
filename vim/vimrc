@@ -25,8 +25,10 @@ set belloff=all
 "==================== INSTALL GVIM (vim-gtk3) TO ENABLE CLIPBOARD FEATURES ====================
 
 " remove menubar and toolbar of gvim
-set go -=m
-set go -=T
+if has("gui_running")
+    set go-=m
+    set go-=T
+endif
 
 if (has("termguicolors"))
     set termguicolors
@@ -170,13 +172,6 @@ map <leader>; :/\s\+$<CR>
 
 " On visual select mode, press n will place a commad on normal mode
 vnoremap n :normal 
-
-" YouCompleteMe Jump To Definition
-nnoremap <leader>jd :YcmCompleter GoTo<CR>
-nnoremap <leader>jr :YcmCompleter GoToReferences<CR>
-let g:ycm_enable_diagnostic_signs = 0
-let g:ycm_show_diagnostics_ui = 0
-let g:ycm_autoclose_preview_window_after_insertion = 1
 
 " NERDTree mappings
 " 'SPC p t' is the 'project tree' command on spacemacs. Use the same here
