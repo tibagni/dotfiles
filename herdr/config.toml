@@ -1,0 +1,22 @@
+onboarding = false
+
+[theme]
+name = "gruvbox"
+auto_switch = false
+
+[keys]
+# Keeps the tmux default prefix (Ctrl+b is already Herdr's default)
+prefix = "ctrl+b"
+
+# Match tmux pane splitting layout
+split_vertical = 'prefix+%'
+split_horizontal = 'prefix+"'
+
+# Match tmux session detachment
+detach = "prefix+d"
+
+# Tmux-style prefix arrow pane navigation
+focus_pane_up = "prefix+up"
+focus_pane_down = "prefix+down"
+focus_pane_left = "prefix+left"
+focus_pane_right = "prefix+right"

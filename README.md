@@ -10,7 +10,7 @@ To install, simply clone this repo and run ./install.sh
  * __[Pop!Os Shell](https://github.com/pop-os/shell)__ - `Tiling window management for GNOME` [How to instal](https://www.linuxuprising.com/2020/05/how-to-install-pop-shell-tiling.html)
  * __[fzf](https://github.com/junegunn/fzf)__ - `A command-line fuzzy finder`
  * __[delta](https://github.com/dandavison/delta)__ - `A syntax-highlighting pager for git, diff, grep, rg --json, and blame output`
- * __[herdr](https://herdr.dev/)__ - `The runtime your coding agents live on (Similar to tmux)`
+ * __[herdr](https://herdr.dev/)__ - `A terminal multiplexer like tmux, with built-in support for AI agents`
  
 ## VIM Plugins (managed by Vundle)
 * __[Vundle.vim](https://github.com/VundleVim/Vundle.vim)__ - `Plugin Manager`

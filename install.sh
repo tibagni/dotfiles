@@ -77,4 +77,14 @@ fi
 echo-info "Installing scripts..."
 ln -s $dir/scripts ~/scripts
 
+# install herdr config. Backup old config if exists first
+mkdir -p ~/.config/herdr
+if [ -f ~/.config/herdr/config.toml ] || [ -L ~/.config/herdr/config.toml ]
+then
+    echo-info "Backing up old herdr config.toml..."
+    mv ~/.config/herdr/config.toml ~/dotfiles_old/herdr_config.toml
+fi
+echo-info "Installing herdr config..."
+ln -s $dir/herdr/config.toml ~/.config/herdr/config.toml
+
 echo-ok "...done"
