@@ -3,6 +3,7 @@
 To install, simply clone this repo and run ./install.sh
 
 ## Additional useful tools to install
+ * __[zsh](https://www.zsh.org/)__ + __[Oh My Zsh](https://ohmyz.sh/)__ - `A powerful shell and framework for managing zsh configuration`
  * __[neofetch](https://github.com/dylanaraps/neofetch)__ - `A command-line system information tool written in bash 3.2+`
  * __[tldr](https://tldr.sh/)__ - `A collection of simplified and community-driven man pages. (better and easier man pages)`
  * __[broot (br)](https://github.com/Canop/broot)__ - `A better way to navigate directories`

@@ -22,9 +22,14 @@ function check_tool {
     local name="$1"
     local cmd="$2"
     local url="$3"
-    local path
+    local path=""
 
-    path="$(command -v "$cmd" 2>/dev/null)"
+    if [[ "$cmd" == /* ]]; then
+        [ -e "$cmd" ] && path="$cmd"
+    else
+        path="$(command -v "$cmd" 2>/dev/null)"
+    fi
+
     if [ -n "$path" ]; then
         echo-ok "$(printf "%-14s - %s" "$name" "$path")"
     else
@@ -174,14 +179,16 @@ echo
 echo ==================================================
 echo Recommended Terminal Tools
 echo ==================================================
-check_tool "neofetch"     "neofetch" "https://github.com/dylanaraps/neofetch"
-check_tool "tldr"         "tldr"     "https://tldr.sh/"
-check_tool "broot (br)"   "broot"    "https://github.com/Canop/broot"
-check_tool "ripgrep (rg)" "rg"       "https://github.com/BurntSushi/ripgrep"
-check_tool "fzf"          "fzf"      "https://github.com/junegunn/fzf"
-check_tool "delta"        "delta"    "https://github.com/dandavison/delta"
-check_tool "herdr"        "herdr"    "https://herdr.dev/"
-check_tool "lazygit"      "lazygit"  "https://github.com/jesseduffield/lazygit"
+check_tool "zsh"          "zsh"              "https://www.zsh.org/"
+check_tool "oh-my-zsh"    "$HOME/.oh-my-zsh" "https://ohmyz.sh/"
+check_tool "neofetch"     "neofetch"         "https://github.com/dylanaraps/neofetch"
+check_tool "tldr"         "tldr"             "https://tldr.sh/"
+check_tool "broot (br)"   "broot"            "https://github.com/Canop/broot"
+check_tool "ripgrep (rg)" "rg"               "https://github.com/BurntSushi/ripgrep"
+check_tool "fzf"          "fzf"              "https://github.com/junegunn/fzf"
+check_tool "delta"        "delta"            "https://github.com/dandavison/delta"
+check_tool "herdr"        "herdr"            "https://herdr.dev/"
+check_tool "lazygit"      "lazygit"          "https://github.com/jesseduffield/lazygit"
 
 if [ "$missing_tools" -gt 0 ]; then
     echo
