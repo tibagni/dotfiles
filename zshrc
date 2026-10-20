@@ -67,10 +67,10 @@ fi
 [ -f $HOME/.config/broot/launcher/bash/br ] && source $HOME/.config/broot/launcher/bash/br
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#888,underline"
 
-which neofetch > /dev/null
+which fastfetch > /dev/null
 if [ $? = 0 ]
 then
-    neofetch
+    fastfetch
 fi
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

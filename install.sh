@@ -181,7 +181,7 @@ echo Recommended Terminal Tools
 echo ==================================================
 check_tool "zsh"          "zsh"              "https://www.zsh.org/"
 check_tool "oh-my-zsh"    "$HOME/.oh-my-zsh" "https://ohmyz.sh/"
-check_tool "neofetch"     "neofetch"         "https://github.com/dylanaraps/neofetch"
+check_tool "fastfetch"    "fastfetch"        "https://github.com/fastfetch-cli/fastfetch"
 check_tool "tldr"         "tldr"             "https://tldr.sh/"
 check_tool "broot (br)"   "broot"            "https://github.com/Canop/broot"
 check_tool "ripgrep (rg)" "rg"               "https://github.com/BurntSushi/ripgrep"
@@ -189,6 +189,7 @@ check_tool "fzf"          "fzf"              "https://github.com/junegunn/fzf"
 check_tool "delta"        "delta"            "https://github.com/dandavison/delta"
 check_tool "herdr"        "herdr"            "https://herdr.dev/"
 check_tool "lazygit"      "lazygit"          "https://github.com/jesseduffield/lazygit"
+check_tool "github-cli"   "gh"               "https://cli.github.com/"
 
 if [ "$missing_tools" -gt 0 ]; then
     echo
