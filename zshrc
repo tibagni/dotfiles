@@ -64,6 +64,8 @@ if grep -qi microsoft /proc/version; then
     fi
 fi
 
+alias glow='glow -w $(tput cols)'
+
 [ -f $HOME/.config/broot/launcher/bash/br ] && source $HOME/.config/broot/launcher/bash/br
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#888,underline"
 
