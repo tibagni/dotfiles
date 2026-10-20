@@ -190,6 +190,8 @@ check_tool "delta"        "delta"            "https://github.com/dandavison/delt
 check_tool "herdr"        "herdr"            "https://herdr.dev/"
 check_tool "lazygit"      "lazygit"          "https://github.com/jesseduffield/lazygit"
 check_tool "github-cli"   "gh"               "https://cli.github.com/"
+check_tool "glow"         "glow"             "https://github.com/charmbracelet/glow"
+
 
 if [ "$missing_tools" -gt 0 ]; then
     echo

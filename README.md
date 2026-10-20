@@ -13,6 +13,7 @@ To install, simply clone this repo and run ./install.sh
  * __[herdr](https://herdr.dev/)__ - `A terminal multiplexer like tmux, with built-in support for AI agents`
  * __[lazygit](https://github.com/jesseduffield/lazygit)__ - `A simple terminal UI for git commands`
  * __[github cli (gh)](https://cli.github.com/)__ - `GitHub on the terminal`
+ * __[glow](https://github.com/charmbracelet/glow)__ - `Render markdown on the CLI`
 
 
 ## VIM Plugins (managed by Vundle)
