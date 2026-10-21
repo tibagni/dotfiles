@@ -20,10 +20,20 @@ if [ -z "$real_tldr" ]; then
     exit 1
 fi
 
+function list_pages {
+    "$real_tldr" --list --single-column 2>/dev/null || "$real_tldr" --list
+}
+
 # When called with no arguments, launch interactive fzf browser
 if [ $# -eq 0 ]; then
     if command -v fzf >/dev/null 2>&1; then
-        selected="$( ("$real_tldr" --list --single-column 2>/dev/null || "$real_tldr" --list) | fzf --prompt="tldr > " --preview="FORCE_COLOR=1 \"$real_tldr\" {}" --preview-window="right:65%:wrap")"
+        preview_cmd="PYTHONUNBUFFERED=1 FORCE_COLOR=1 \"$real_tldr\" {}"
+        selected="$(
+            list_pages | fzf \
+                --prompt="tldr > " \
+                --preview="$preview_cmd" \
+                --preview-window="right:65%:wrap"
+        )"
         if [ -n "$selected" ]; then
             exec "$real_tldr" "$selected"
         fi
