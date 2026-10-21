@@ -2,11 +2,14 @@
 export PATH=$HOME/bin:$HOME/scripts:/usr/local/bin:$HOME/dotfiles/scripts:$PATH
 export PATH=$HOME/.local/bin:$PATH
 
-# XDG Base Directory specification
-export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
-export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
-export XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
-export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
+# On macOS, export XDG variables so CLI tools use ~/.config instead of ~/Library
+# (On Linux these are already the defaults, and exporting them globally breaks Snap sandboxes like glow)
+if [[ "$OSTYPE" == darwin* ]]; then
+    export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+    export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
+    export XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
+    export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
+fi
 
 # Path to your oh-my-zsh installation.
 export ZSH=$HOME/.oh-my-zsh
@@ -72,7 +75,7 @@ fi
 
 alias glow='glow -w $(tput cols)'
 
-[ -f "$XDG_CONFIG_HOME/broot/launcher/bash/br" ] && source "$XDG_CONFIG_HOME/broot/launcher/bash/br"
+[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/broot/launcher/bash/br" ] && source "${XDG_CONFIG_HOME:-$HOME/.config}/broot/launcher/bash/br"
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#888,underline"
 
 which fastfetch > /dev/null

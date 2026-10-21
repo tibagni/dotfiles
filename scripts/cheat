@@ -1,0 +1,92 @@
+#!/bin/bash
+# Browse and render markdown cheatsheets from tibagni/cheatsheets
+
+cheats_dir="${CHEATSHEETS_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/cheatsheets}"
+
+function render_sheet {
+    local file="$1"
+    if command -v glow >/dev/null 2>&1; then
+        # Pass via stdin (-) and unset XDG_CONFIG_HOME so Snap-packaged glow uses its sandbox config dir
+        env -u XDG_CONFIG_HOME glow -s dark -w "$(tput cols)" - < "$file" | less -RFX
+    else
+        less "$file"
+    fi
+}
+
+function list_sheets {
+    find "$cheats_dir" -maxdepth 1 -name '*.md' ! -name 'README.md' -printf '%f\n' \
+        | sed 's/\.md$//' \
+        | sort
+}
+
+function show_help {
+    echo "Usage: cheat [topic | option]"
+    echo
+    echo "Options:"
+    echo "  (no args)        Interactive picker (requires fzf)"
+    echo "  <topic>          View a specific cheatsheet (e.g., 'cheat broot')"
+    echo "  -l, --list       List available cheatsheets"
+    echo "  -e, --edit <t>   Create or edit a cheatsheet in \$EDITOR"
+    echo "  -u, --update     Pull latest cheatsheets from GitHub"
+    echo "  -h, --help       Show this help"
+}
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    show_help
+    exit 0
+fi
+
+if [ ! -d "$cheats_dir" ]; then
+    echo "Cloning cheatsheets repo into $cheats_dir..."
+    mkdir -p "$(dirname "$cheats_dir")"
+    if ! git clone https://github.com/tibagni/cheatsheets.git "$cheats_dir"; then
+        echo "Failed to clone cheatsheets repository."
+        exit 1
+    fi
+elif [ "$1" != "-u" ] && [ "$1" != "--update" ]; then
+    # Keep cheatsheets up to date in the background without slowing down startup
+    (git -C "$cheats_dir" pull --ff-only --quiet >/dev/null 2>&1 &)
+fi
+
+case "$1" in
+    -l|--list)
+        list_sheets
+        ;;
+    -u|--update)
+        git -C "$cheats_dir" pull
+        ;;
+    -e|--edit)
+        if [ -z "$2" ]; then
+            echo "Usage: cheat --edit <topic>"
+            exit 1
+        fi
+        topic="$(basename "$2" .md)"
+        "${EDITOR:-vim}" "$cheats_dir/$topic.md"
+        ;;
+    "")
+        if command -v fzf >/dev/null 2>&1; then
+            preview_cmd="cat \"$cheats_dir/\"{}.md"
+            if command -v glow >/dev/null 2>&1; then
+                preview_cmd="env -u XDG_CONFIG_HOME glow -s dark - < \"$cheats_dir/\"{}.md"
+            fi
+            selected="$(list_sheets | fzf --prompt="Cheatsheet > " --preview="$preview_cmd" --preview-window=right:70%:wrap)"
+            if [ -n "$selected" ]; then
+                render_sheet "$cheats_dir/$selected.md"
+            fi
+        else
+            echo "Available cheatsheets (install fzf for interactive picker):"
+            list_sheets
+        fi
+        ;;
+    *)
+        topic="$(basename "$1" .md)"
+        target="$cheats_dir/$topic.md"
+        if [ -f "$target" ]; then
+            render_sheet "$target"
+        else
+            echo "Cheatsheet '$1' not found. Available cheatsheets:"
+            list_sheets
+            exit 1
+        fi
+        ;;
+esac
