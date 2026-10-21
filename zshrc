@@ -1,6 +1,7 @@
 # If you come from bash you might have to change your $PATH.
-export PATH=$HOME/bin:$HOME/scripts:/usr/local/bin:$PATH
-export PATH=$HOME/.local/bin:$PATH
+export PATH=$HOME/scripts:$HOME/.local/bin:$HOME/bin:/usr/local/bin:$PATH
+# Automatically deduplicate PATH entries (keeps only the first occurrence of each directory)
+typeset -U path PATH
 
 # On macOS, export XDG variables so CLI tools use ~/.config instead of ~/Library
 # (On Linux these are already the defaults, and exporting them globally breaks Snap sandboxes like glow)

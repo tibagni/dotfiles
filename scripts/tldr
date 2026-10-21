@@ -23,7 +23,7 @@ fi
 # When called with no arguments, launch interactive fzf browser
 if [ $# -eq 0 ]; then
     if command -v fzf >/dev/null 2>&1; then
-        selected="$("$real_tldr" --list --single-column | fzf --prompt="tldr > " --preview="\"$real_tldr\" {}" --preview-window="right:65%:wrap")"
+        selected="$( ("$real_tldr" --list --single-column 2>/dev/null || "$real_tldr" --list) | fzf --prompt="tldr > " --preview="FORCE_COLOR=1 \"$real_tldr\" {}" --preview-window="right:65%:wrap")"
         if [ -n "$selected" ]; then
             exec "$real_tldr" "$selected"
         fi
