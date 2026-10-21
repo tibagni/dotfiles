@@ -13,7 +13,11 @@ function echo-miss { printf "\033[0;33m[MISS]\033[0m %s\n" "$*"; }
 ########## Variables
 dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"  # dotfiles directory
 olddir="$HOME/dotfiles_old"                           # old dotfiles backup directory
-xdg_config="${XDG_CONFIG_HOME:-$HOME/.config}"        # XDG config directory
+
+export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
+export XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
+export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
 ##########
 
 missing_tools=0
@@ -185,12 +189,12 @@ if [ -f "$HOME/.bashrc" ]; then
 fi
 
 # Tool-specific configurations (link if installed, unlink if not)
-sync_tool_config "vim"                   "$dir/vim"                "$HOME/.vim"
-sync_tool_config "tmux"                  "$dir/tmux.conf"          "$HOME/.tmux.conf"
-sync_tool_config "zsh"                   "$dir/zshrc"              "$HOME/.zshrc"
-sync_tool_config "$xdg_config/JetBrains" "$dir/ideavimrc"          "$HOME/.ideavimrc"
-sync_tool_config "herdr"                 "$dir/herdr/config.toml"  "$xdg_config/herdr/config.toml"   "herdr_config.toml"
-sync_tool_config "lazygit"               "$dir/lazygit/config.yml" "$xdg_config/lazygit/config.yml" "lazygit_config.yml"
+sync_tool_config "vim"                        "$dir/vim"                "$HOME/.vim"
+sync_tool_config "tmux"                       "$dir/tmux.conf"          "$HOME/.tmux.conf"
+sync_tool_config "zsh"                        "$dir/zshrc"              "$HOME/.zshrc"
+sync_tool_config "$XDG_CONFIG_HOME/JetBrains" "$dir/ideavimrc"          "$HOME/.ideavimrc"
+sync_tool_config "herdr"                      "$dir/herdr/config.toml"  "$XDG_CONFIG_HOME/herdr/config.toml"   "herdr_config.toml"
+sync_tool_config "lazygit"                    "$dir/lazygit/config.yml" "$XDG_CONFIG_HOME/lazygit/config.yml" "lazygit_config.yml"
 
 # Tool-specific setup steps
 run_if_installed "zsh" setup_zsh
