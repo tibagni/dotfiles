@@ -25,7 +25,14 @@ function resolve_tool {
             echo "$cmd"
         fi
     else
-        command -v "$cmd" 2>/dev/null
+        # Ignore wrapper scripts inside ~/dotfiles/scripts when checking if a tool is installed
+        local candidate
+        for candidate in $(type -ap "$cmd" 2>/dev/null); do
+            if [ "$(readlink -f "$candidate")" != "$(readlink -f "$dir/scripts/$cmd")" ]; then
+                echo "$candidate"
+                return
+            fi
+        done
     fi
 }
 

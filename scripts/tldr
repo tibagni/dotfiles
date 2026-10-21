@@ -1,0 +1,42 @@
+#!/bin/bash
+# Summary: Smart wrapper for tldr (opens interactive fzf picker when run with no args)
+#
+# NOTE: This script is a wrapper around the 'tldr' CLI tool.
+# For this wrapper to intercept 'tldr' calls, ~/scripts must appear BEFORE
+# the real 'tldr' binary's directory (e.g., /usr/local/bin or /usr/bin) in PATH.
+
+# Find the real tldr binary in PATH (skipping this wrapper script itself)
+self="$(readlink -f "${BASH_SOURCE[0]}")"
+real_tldr=""
+for candidate in $(type -ap tldr); do
+    if [ "$(readlink -f "$candidate")" != "$self" ]; then
+        real_tldr="$candidate"
+        break
+    fi
+done
+
+if [ -z "$real_tldr" ]; then
+    echo "Error: 'tldr' is not installed (https://tldr.sh/)."
+    exit 1
+fi
+
+# When called with no arguments, launch interactive fzf browser
+if [ $# -eq 0 ]; then
+    if command -v fzf >/dev/null 2>&1; then
+        selected="$("$real_tldr" --list --single-column | fzf --prompt="tldr > " --preview="\"$real_tldr\" {}" --preview-window="right:65%:wrap")"
+        if [ -n "$selected" ]; then
+            exec "$real_tldr" "$selected"
+        fi
+        exit 0
+    fi
+fi
+
+# If --help is requested, show wrapper info before the standard tldr --help
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    echo "tldr (dotfiles wrapper -> $real_tldr)"
+    echo "  Run 'tldr' with no arguments to browse all pages interactively with fzf."
+    echo "  Any arguments are forwarded directly to $real_tldr:"
+    echo
+fi
+
+exec "$real_tldr" "$@"
