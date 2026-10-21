@@ -1,0 +1,76 @@
+#!/bin/bash
+# Summary: List all custom scripts in ~/scripts and preview their help
+
+scripts_dir="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
+
+function get_summary {
+    local file="$1"
+    grep -m 1 '^# Summary:' "$file" | sed 's/^# Summary:[[:space:]]*//'
+}
+
+function list_tools {
+    for path in "$scripts_dir"/*; do
+        if [ -f "$path" ] && [ -x "$path" ]; then
+            local name="$(basename "$path")"
+            local summary="$(get_summary "$path")"
+            if [ -z "$summary" ]; then
+                summary="(No summary header)"
+            fi
+            printf "\033[1;32m%-12s\033[0m - %s\n" "$name" "$summary"
+        fi
+    done
+}
+
+function show_help {
+    echo "tools - Discover custom commands in ~/scripts"
+    echo
+    echo "Automatically scans $scripts_dir for executable scripts and"
+    echo "displays their '# Summary:' header and '--help' documentation."
+    echo
+    echo "Usage:"
+    echo "  tools              Print a summary table of all available scripts"
+    echo "  tools -i           Interactive fzf browser with live '--help' preview"
+    echo "  tools <script>     Show '--help' for a specific script"
+    echo "  tools -h, --help   Show this help message"
+}
+
+case "$1" in
+    -h|--help)
+        show_help
+        ;;
+    -i|--interactive)
+        if ! command -v fzf >/dev/null 2>&1; then
+            echo "Error: 'fzf' is required for interactive mode."
+            exit 1
+        fi
+        selected="$(
+            list_tools | fzf --ansi \
+                --prompt="Tool > " \
+                --delimiter=" " \
+                --preview="$scripts_dir/{1} --help" \
+                --preview-window="right:65%:wrap"
+        )"
+        if [ -n "$selected" ]; then
+            tool_name="$(echo "$selected" | awk '{print $1}')"
+            "$scripts_dir/$tool_name" --help
+        fi
+        ;;
+    "")
+        echo "Available custom commands in ~/scripts:"
+        echo
+        list_tools
+        echo
+        echo "Tip: Run '<command> --help' or 'tools -i' to browse help interactively."
+        ;;
+    *)
+        target="$scripts_dir/$1"
+        if [ -f "$target" ] && [ -x "$target" ]; then
+            "$target" --help
+        else
+            echo "Unknown script '$1'. Available scripts:"
+            echo
+            list_tools
+            exit 1
+        fi
+        ;;
+esac

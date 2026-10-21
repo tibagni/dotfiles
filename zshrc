@@ -1,5 +1,5 @@
 # If you come from bash you might have to change your $PATH.
-export PATH=$HOME/bin:$HOME/scripts:/usr/local/bin:$HOME/dotfiles/scripts:$PATH
+export PATH=$HOME/bin:$HOME/scripts:/usr/local/bin:$PATH
 export PATH=$HOME/.local/bin:$PATH
 
 # On macOS, export XDG variables so CLI tools use ~/.config instead of ~/Library

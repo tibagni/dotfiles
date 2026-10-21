@@ -1,5 +1,5 @@
 #!/bin/bash
-# Browse and render markdown cheatsheets from tibagni/cheatsheets
+# Summary: Browse and render personal markdown cheatsheets (tibagni/cheatsheets)
 
 cheats_dir="${CHEATSHEETS_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/cheatsheets}"
 
@@ -20,15 +20,22 @@ function list_sheets {
 }
 
 function show_help {
-    echo "Usage: cheat [topic | option]"
+    echo "cheat - Personal markdown cheatsheet viewer"
     echo
-    echo "Options:"
-    echo "  (no args)        Interactive picker (requires fzf)"
-    echo "  <topic>          View a specific cheatsheet (e.g., 'cheat broot')"
-    echo "  -l, --list       List available cheatsheets"
-    echo "  -e, --edit <t>   Create or edit a cheatsheet in \$EDITOR"
-    echo "  -u, --update     Pull latest cheatsheets from GitHub"
-    echo "  -h, --help       Show this help"
+    echo "Backed by https://github.com/tibagni/cheatsheets"
+    echo "Local clone: $cheats_dir"
+    echo
+    echo "On first run, 'cheat' automatically clones your cheatsheets repo locally"
+    echo "and silently fast-forwards it in the background on subsequent runs."
+    echo "Uses 'fzf' for interactive fuzzy picking and 'glow' for terminal rendering."
+    echo
+    echo "Usage:"
+    echo "  cheat                  Open interactive fzf picker with live glow preview"
+    echo "  cheat <topic>          Render a specific cheatsheet (e.g., 'cheat broot')"
+    echo "  cheat -l, --list       List all available cheatsheet topics"
+    echo "  cheat -e, --edit <t>   Create or edit a cheatsheet in \$EDITOR (${EDITOR:-vim})"
+    echo "  cheat -u, --update     Pull latest cheatsheets from GitHub in the foreground"
+    echo "  cheat -h, --help       Show this help message"
 }
 
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
