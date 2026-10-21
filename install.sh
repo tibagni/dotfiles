@@ -168,6 +168,17 @@ function setup_git {
     fi
 }
 
+if [ "$1" = "-u" ] || [ "$1" = "--update" ]; then
+    echo-info "Updating dotfiles repository..."
+    if git -C "$dir" pull --ff-only; then
+        echo-ok "Updated dotfiles repository"
+        exec "$0"
+    else
+        echo-miss "Failed to fast-forward dotfiles repository"
+        exit 1
+    fi
+fi
+
 echo ==================================================
 echo Dotfiles
 echo ==================================================
