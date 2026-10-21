@@ -5,30 +5,36 @@
 # from http://blog.smalleycreative.com/tutorials/using-git-and-github-to-manage-your-dotfiles/
 ############################
 
-function echo-ok   { printf "\r\033[2K\033[0;32m[ OK ]\033[0m %s\n" "$*"; }
-function echo-skip { printf "\r\033[2K\033[38;05;240m[SKIP]\033[0m %s\n" "$*"; }
-function echo-info { printf "\r\033[2K\033[0;34m[ .. ]\033[0m %s\n" "$*"; }
-function echo-miss { printf "\r\033[2K\033[0;33m[MISS]\033[0m %s\n" "$*"; }
+function echo-ok   { printf "\033[0;32m[ OK ]\033[0m %s\n" "$*"; }
+function echo-skip { printf "\033[38;05;240m[SKIP]\033[0m %s\n" "$*"; }
+function echo-info { printf "\033[0;34m[ .. ]\033[0m %s\n" "$*"; }
+function echo-miss { printf "\033[0;33m[MISS]\033[0m %s\n" "$*"; }
 
 ########## Variables
 dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"  # dotfiles directory
-olddir=~/dotfiles_old                                 # old dotfiles backup directory
-files="vim tmux.conf ideavimrc spacemacs"             # list of files/folders to symlink in homedir
+olddir="$HOME/dotfiles_old"                           # old dotfiles backup directory
+xdg_config="${XDG_CONFIG_HOME:-$HOME/.config}"        # XDG config directory
 ##########
 
 missing_tools=0
+
+function resolve_tool {
+    local cmd="$1"
+    if [[ "$cmd" == /* ]]; then
+        if [ -e "$cmd" ]; then
+            echo "$cmd"
+        fi
+    else
+        command -v "$cmd" 2>/dev/null
+    fi
+}
 
 function check_tool {
     local name="$1"
     local cmd="$2"
     local url="$3"
-    local path=""
-
-    if [[ "$cmd" == /* ]]; then
-        [ -e "$cmd" ] && path="$cmd"
-    else
-        path="$(command -v "$cmd" 2>/dev/null)"
-    fi
+    local path
+    path="$(resolve_tool "$cmd")"
 
     if [ -n "$path" ]; then
         echo-ok "$(printf "%-14s - %s" "$name" "$path")"
@@ -40,15 +46,13 @@ function check_tool {
 
 function run_if_installed {
     local tool="$1"
-    local on_installed="$2"
-    local on_missing="$3"
+    local setup_fn="$2"
+    local label="$(basename "$tool")"
 
-    if command -v "$tool" >/dev/null 2>&1; then
-        eval "$on_installed"
-    elif [ -n "$on_missing" ]; then
-        eval "$on_missing"
+    if [ -n "$(resolve_tool "$tool")" ]; then
+        "$setup_fn"
     else
-        echo-skip "$tool not installed, skipping"
+        echo-skip "$label not installed, skipping"
     fi
 }
 
@@ -95,24 +99,42 @@ function unlink_file {
     fi
 }
 
-function setup_zsh {
-    link_file "$dir/zshrc" ~/.zshrc
+function sync_tool_config {
+    local tool="$1"
+    local src="$2"
+    local dst="$3"
+    local backup_name="$4"
+    local label="$(basename "$tool")"
 
-    if [ -d ~/.oh-my-zsh ]; then
+    if [ -n "$(resolve_tool "$tool")" ]; then
+        link_file "$src" "$dst" "$backup_name"
+    else
+        unlink_file "$src" "$dst" "$label"
+    fi
+}
+
+function setup_zsh {
+    if [ -d "$HOME/.oh-my-zsh" ]; then
         local zsh_custom="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
 
         if [ ! -d "$zsh_custom/plugins/zsh-autosuggestions" ]; then
             echo-info "Installing zsh-autosuggestions..."
-            git clone https://github.com/zsh-users/zsh-autosuggestions "$zsh_custom/plugins/zsh-autosuggestions"
-            echo-ok "Installed zsh-autosuggestions"
+            if git clone https://github.com/zsh-users/zsh-autosuggestions "$zsh_custom/plugins/zsh-autosuggestions"; then
+                echo-ok "Installed zsh-autosuggestions"
+            else
+                echo-miss "Failed to install zsh-autosuggestions"
+            fi
         else
             echo-skip "zsh-autosuggestions already installed"
         fi
 
         if [ ! -d "$zsh_custom/plugins/zsh-syntax-highlighting" ]; then
             echo-info "Installing zsh-syntax-highlighting..."
-            git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$zsh_custom/plugins/zsh-syntax-highlighting"
-            echo-ok "Installed zsh-syntax-highlighting"
+            if git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$zsh_custom/plugins/zsh-syntax-highlighting"; then
+                echo-ok "Installed zsh-syntax-highlighting"
+            else
+                echo-miss "Failed to install zsh-syntax-highlighting"
+            fi
         else
             echo-skip "zsh-syntax-highlighting already installed"
         fi
@@ -122,12 +144,15 @@ function setup_zsh {
 }
 
 function setup_vim {
-    if [ ! -d ~/.vim/bundle/Vundle.vim ]; then
+    if [ ! -d "$HOME/.vim/bundle/Vundle.vim" ]; then
         echo-info "Installing Vundle..."
-        git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
-        echo-info "Installing Vim plugins..."
-        vim +PluginInstall +qall
-        echo-ok "Installed Vundle and Vim plugins"
+        if git clone https://github.com/VundleVim/Vundle.vim.git "$HOME/.vim/bundle/Vundle.vim"; then
+            echo-info "Installing Vim plugins..."
+            vim --not-a-term +PluginInstall +qall
+            echo-ok "Installed Vundle and Vim plugins"
+        else
+            echo-miss "Failed to install Vundle"
+        fi
     else
         echo-skip "Vundle already installed"
     fi
@@ -147,32 +172,30 @@ echo ==================================================
 echo Dotfiles
 echo ==================================================
 
-# Symlink core dotfiles
-for file in $files; do
-    link_file "$dir/$file" ~/."$file"
-done
-
 # Install scripts folder and ensure ~/scripts is in PATH for bash environments
-link_file "$dir/scripts" ~/scripts "scripts"
-if [ -f ~/.bashrc ]; then
-    if ! grep -q 'HOME/scripts' ~/.bashrc && ! grep -q '~/scripts' ~/.bashrc; then
+link_file "$dir/scripts" "$HOME/scripts" "scripts"
+if [ -f "$HOME/.bashrc" ]; then
+    if ! grep -q 'HOME/scripts' "$HOME/.bashrc" && ! grep -q '~/scripts' "$HOME/.bashrc"; then
         echo-info "Adding ~/scripts to PATH in ~/.bashrc..."
-        printf '\n# Add dotfiles scripts to PATH\nexport PATH="$HOME/scripts:$PATH"\n' >> ~/.bashrc
+        printf '\n# Add dotfiles scripts to PATH\nexport PATH="$HOME/scripts:$PATH"\n' >> "$HOME/.bashrc"
         echo-ok "Added ~/scripts to ~/.bashrc"
     else
         echo-skip "~/scripts already in ~/.bashrc"
     fi
 fi
 
-# Tool-specific configurations (run command A if installed, command B if not)
-run_if_installed "zsh"     "setup_zsh" \
-                           "unlink_file \"$dir/zshrc\" ~/.zshrc zsh"
-run_if_installed "vim"     "setup_vim"
-run_if_installed "herdr"   "link_file \"$dir/herdr/config.toml\" ~/.config/herdr/config.toml herdr_config.toml" \
-                           "unlink_file \"$dir/herdr/config.toml\" ~/.config/herdr/config.toml herdr"
-run_if_installed "lazygit" "link_file \"$dir/lazygit/config.yml\" ~/.config/lazygit/config.yml lazygit_config.yml" \
-                           "unlink_file \"$dir/lazygit/config.yml\" ~/.config/lazygit/config.yml lazygit"
-run_if_installed "git"     "setup_git"
+# Tool-specific configurations (link if installed, unlink if not)
+sync_tool_config "vim"                   "$dir/vim"                "$HOME/.vim"
+sync_tool_config "tmux"                  "$dir/tmux.conf"          "$HOME/.tmux.conf"
+sync_tool_config "zsh"                   "$dir/zshrc"              "$HOME/.zshrc"
+sync_tool_config "$xdg_config/JetBrains" "$dir/ideavimrc"          "$HOME/.ideavimrc"
+sync_tool_config "herdr"                 "$dir/herdr/config.toml"  "$xdg_config/herdr/config.toml"   "herdr_config.toml"
+sync_tool_config "lazygit"               "$dir/lazygit/config.yml" "$xdg_config/lazygit/config.yml" "lazygit_config.yml"
+
+# Tool-specific setup steps
+run_if_installed "zsh" setup_zsh
+run_if_installed "vim" setup_vim
+run_if_installed "git" setup_git
 
 echo-ok "...done"
 echo

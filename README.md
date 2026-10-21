@@ -19,7 +19,3 @@ To install, simply clone this repo and run ./install.sh
 ## VIM Plugins (managed by Vundle)
 * __[Vundle.vim](https://github.com/VundleVim/Vundle.vim)__ - `Plugin Manager`
 * __[NERDTree](https://github.com/preservim/nerdtree)__ - `File system explorer`
-
-
-## Spacemacs
-* __[Spacemacs.org](https://www.spacemacs.org/)__ - `Spacemacs`
