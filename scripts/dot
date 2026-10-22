@@ -1,0 +1,85 @@
+#!/bin/bash
+# Summary: Manage and edit dotfiles from anywhere (fzf + $EDITOR + lazygit)
+
+scripts_dir="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
+dotfiles_dir="$(cd "$scripts_dir/.." && pwd)"
+
+function list_files {
+    git -C "$dotfiles_dir" ls-files --cached --others --exclude-standard | sort
+}
+
+function show_help {
+    echo "dot - Manage and edit your dotfiles from any directory"
+    echo
+    echo "Repository: $dotfiles_dir"
+    echo
+    echo "Usage:"
+    echo "  dot                    Interactive fzf file picker -> open in \$EDITOR (${EDITOR:-vim})"
+    echo "  dot <query>            Open matching dotfile (or pre-fill fzf with <query>)"
+    echo "  dot -g, --git, git     Open lazygit inside $dotfiles_dir"
+    echo "  dot -s, --status       Show git status of dotfiles"
+    echo "  dot -d, --diff         Show git diff of uncommitted dotfile changes"
+    echo "  dot -i, --install      Run install.sh"
+    echo "  dot -u, --update       Run install.sh -u (git pull --ff-only + install)"
+    echo "  dot -h, --help         Show this help message"
+}
+
+function pick_and_edit {
+    local query="$1"
+    if ! command -v fzf >/dev/null 2>&1; then
+        echo "Available files in $dotfiles_dir:"
+        list_files
+        exit 1
+    fi
+
+    local preview_cmd="nl -ba \"$dotfiles_dir/\"{}"
+    local selected
+    selected="$(
+        list_files | fzf \
+            --query="$query" \
+            --select-1 \
+            --exit-0 \
+            --prompt="dotfiles > " \
+            --preview="$preview_cmd" \
+            --preview-window="right:65%:wrap"
+    )"
+
+    if [ -n "$selected" ]; then
+        exec "${EDITOR:-vim}" "$dotfiles_dir/$selected"
+    fi
+}
+
+case "$1" in
+    -h|--help|help)
+        show_help
+        ;;
+    -g|--git|git)
+        if command -v lazygit >/dev/null 2>&1; then
+            exec lazygit -p "$dotfiles_dir"
+        else
+            git -C "$dotfiles_dir" status
+        fi
+        ;;
+    -s|--status|status)
+        git -C "$dotfiles_dir" status -sb
+        ;;
+    -d|--diff|diff)
+        git -C "$dotfiles_dir" diff
+        ;;
+    -i|--install|install)
+        exec "$dotfiles_dir/install.sh"
+        ;;
+    -u|--update|update)
+        exec "$dotfiles_dir/install.sh" -u
+        ;;
+    "")
+        pick_and_edit ""
+        ;;
+    *)
+        if [ -f "$dotfiles_dir/$1" ]; then
+            exec "${EDITOR:-vim}" "$dotfiles_dir/$1"
+        else
+            pick_and_edit "$*"
+        fi
+        ;;
+esac
