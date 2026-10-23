@@ -52,15 +52,13 @@ function mkcd()
 }
 
 # Aliases
-which xdg-open > /dev/null
-if [ $? = 0 ]
-then
+if command -v xdg-open >/dev/null 2>&1; then
     alias open=xdg-open
 fi
 alias lv="java -jar ~/bin/log-viewer/LogViewer.jar"
 alias d2j="sh ~/bin/dex-tools/dex2jar/d2j-dex2jar.sh -f"
 
-if grep -qi microsoft /proc/version; then
+if grep -qi microsoft /proc/version 2>/dev/null; then
     echo "Configuring Windows aliases"
     alias adb=adb.exe
     alias fastboot=fastboot.exe
@@ -79,9 +77,7 @@ alias glow='glow -w $(tput cols)'
 [ -f "${XDG_CONFIG_HOME:-$HOME/.config}/broot/launcher/bash/br" ] && source "${XDG_CONFIG_HOME:-$HOME/.config}/broot/launcher/bash/br"
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#888,underline"
 
-which fastfetch > /dev/null
-if [ $? = 0 ]
-then
+if command -v fastfetch >/dev/null 2>&1; then
     fastfetch
 fi
 

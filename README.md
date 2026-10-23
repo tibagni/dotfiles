@@ -1,6 +1,14 @@
 # Dot files
 
-To install, simply clone this repo and run ./install.sh
+To install, simply clone this repo and run `./install.sh` (or `./install.sh -u` to pull the latest changes and re-run install).
+
+## Custom Scripts (`~/scripts`)
+Run `tools` (or `tools -i` for an interactive `fzf` browser) from anywhere to list the custom scripts included in this repo:
+ * **`tools`** - `List all custom scripts in ~/scripts and preview their help`
+ * **`cheat`** - `Browse and render personal markdown cheatsheets (tibagni/cheatsheets)`
+ * **`dot`** - `Manage and edit dotfiles from anywhere (fzf + $EDITOR + lazygit)`
+ * **`rg`** - `Smart wrapper for ripgrep (opens interactive fzf search -> $EDITOR when run with no args)`
+ * **`tldr`** - `Smart wrapper for tldr (opens interactive fzf picker when run with no args)`
 
 ## Additional useful tools to install
  * __[zsh](https://www.zsh.org/)__ + __[Oh My Zsh](https://ohmyz.sh/)__ - `A powerful shell and framework for managing zsh configuration`
