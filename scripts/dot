@@ -16,6 +16,7 @@ function show_help {
     echo "Usage:"
     echo "  dot                    Interactive fzf file picker -> open in \$EDITOR (${EDITOR:-vim})"
     echo "  dot <query>            Open matching dotfile (or pre-fill fzf with <query>)"
+    echo "  dot -l, --list, list   List installed dotfile symlinks and recommended tools"
     echo "  dot -g, --git, git     Open lazygit inside $dotfiles_dir"
     echo "  dot -s, --status       Show git status of dotfiles"
     echo "  dot -d, --diff         Show git diff of uncommitted dotfile changes"
@@ -52,6 +53,9 @@ function pick_and_edit {
 case "$1" in
     -h|--help|help)
         show_help
+        ;;
+    -l|--list|list)
+        exec "$dotfiles_dir/install.sh" --list
         ;;
     -g|--git|git)
         if command -v lazygit >/dev/null 2>&1; then

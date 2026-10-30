@@ -175,6 +175,57 @@ function setup_git {
     fi
 }
 
+function check_link {
+    local label="$1"
+    local src="$2"
+    local dst="$3"
+
+    if [ -L "$dst" ] && [ "$(readlink -f "$dst")" = "$(readlink -f "$src")" ]; then
+        echo-ok "$(printf "%-14s - %s -> %s" "$label" "$dst" "$src")"
+    else
+        echo-miss "$(printf "%-14s - %s (not linked)" "$label" "$dst")"
+    fi
+}
+
+function check_recommended_tools {
+    echo ==================================================
+    echo Recommended Terminal Tools
+    echo ==================================================
+    check_tool "zsh"          "zsh"              "https://www.zsh.org/"
+    check_tool "oh-my-zsh"    "$HOME/.oh-my-zsh" "https://ohmyz.sh/"
+    check_tool "fastfetch"    "fastfetch"        "https://github.com/fastfetch-cli/fastfetch"
+    check_tool "tldr"         "tldr"             "https://tldr.sh/"
+    check_tool "broot (br)"   "broot"            "https://github.com/Canop/broot"
+    check_tool "ripgrep (rg)" "rg"               "https://github.com/BurntSushi/ripgrep"
+    check_tool "fzf"          "fzf"              "https://github.com/junegunn/fzf"
+    check_tool "delta"        "delta"            "https://github.com/dandavison/delta"
+    check_tool "herdr"        "herdr"            "https://herdr.dev/"
+    check_tool "lazygit"      "lazygit"          "https://github.com/jesseduffield/lazygit"
+    check_tool "github-cli"   "gh"               "https://cli.github.com/"
+    check_tool "glow"         "glow"             "https://github.com/charmbracelet/glow"
+}
+
+if [ "$1" = "-l" ] || [ "$1" = "--list" ]; then
+    echo ==================================================
+    echo Installed Dotfiles
+    echo ==================================================
+    check_link "scripts"   "$dir/scripts"           "$HOME/scripts"
+    check_link "vim"       "$dir/vim"               "$HOME/.vim"
+    check_link "tmux"      "$dir/tmux.conf"         "$HOME/.tmux.conf"
+    check_link "zsh"       "$dir/zshrc"             "$HOME/.zshrc"
+    check_link "ideavim"   "$dir/ideavimrc"         "$HOME/.ideavimrc"
+    check_link "herdr"     "$dir/herdr/config.toml" "$xdg_config/herdr/config.toml"
+    check_link "lazygit"   "$dir/lazygit/config.yml" "$xdg_config/lazygit/config.yml"
+    if git config --global --get-all include.path 2>/dev/null | grep -Fxq "$dir/gitconfig"; then
+        echo-ok "$(printf "%-14s - ~/.gitconfig includes %s" "git" "$dir/gitconfig")"
+    else
+        echo-miss "$(printf "%-14s - ~/.gitconfig (not included)" "git")"
+    fi
+    echo
+    check_recommended_tools
+    exit 0
+fi
+
 if [ "$1" = "-u" ] || [ "$1" = "--update" ]; then
     echo-info "Updating dotfiles repository..."
     if git -C "$dir" pull --ff-only; then
@@ -217,21 +268,7 @@ run_if_installed "git" setup_git
 
 echo-ok "...done"
 echo
-echo ==================================================
-echo Recommended Terminal Tools
-echo ==================================================
-check_tool "zsh"          "zsh"              "https://www.zsh.org/"
-check_tool "oh-my-zsh"    "$HOME/.oh-my-zsh" "https://ohmyz.sh/"
-check_tool "fastfetch"    "fastfetch"        "https://github.com/fastfetch-cli/fastfetch"
-check_tool "tldr"         "tldr"             "https://tldr.sh/"
-check_tool "broot (br)"   "broot"            "https://github.com/Canop/broot"
-check_tool "ripgrep (rg)" "rg"               "https://github.com/BurntSushi/ripgrep"
-check_tool "fzf"          "fzf"              "https://github.com/junegunn/fzf"
-check_tool "delta"        "delta"            "https://github.com/dandavison/delta"
-check_tool "herdr"        "herdr"            "https://herdr.dev/"
-check_tool "lazygit"      "lazygit"          "https://github.com/jesseduffield/lazygit"
-check_tool "github-cli"   "gh"               "https://cli.github.com/"
-check_tool "glow"         "glow"             "https://github.com/charmbracelet/glow"
+check_recommended_tools
 
 
 if [ "$missing_tools" -gt 0 ]; then
