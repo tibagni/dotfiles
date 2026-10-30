@@ -175,6 +175,68 @@ function setup_git {
     fi
 }
 
+function check_environment {
+    echo ==================================================
+    echo "Environment & Local Config"
+    echo ==================================================
+
+    local commit
+    commit="$(git -C "$dir" rev-parse --short HEAD 2>/dev/null)"
+    if [ -n "$(git -C "$dir" status --porcelain 2>/dev/null)" ]; then
+        echo-miss "$(printf "%-14s - %s (has uncommitted changes)" "repo" "$commit")"
+    else
+        echo-ok "$(printf "%-14s - %s (clean)" "repo" "$commit")"
+    fi
+
+    echo-ok "$(printf "%-14s - %s (EDITOR=%s, TERM=%s)" "shell" "${SHELL:-unknown}" "${EDITOR:-unset}" "${TERM:-unset}")"
+
+    local shadowed=""
+    local script
+    for script in "$dir/scripts"/*; do
+        if [ -f "$script" ] && [ -x "$script" ]; then
+            local name="$(basename "$script")"
+            local resolved="$(command -v "$name" 2>/dev/null)"
+            if [ "$(readlink -f "$resolved")" != "$(readlink -f "$script")" ]; then
+                shadowed="$shadowed $name"
+            fi
+        fi
+    done
+    if [ -z "$shadowed" ]; then
+        echo-ok "$(printf "%-14s - all ~/scripts commands resolve first in PATH" "PATH priority")"
+    else
+        echo-miss "$(printf "%-14s - shadowed in PATH:%s" "PATH priority" "$shadowed")"
+    fi
+
+    local git_name git_email
+    git_name="$(git config --global user.name 2>/dev/null)"
+    git_email="$(git config --global user.email 2>/dev/null)"
+    if [ -n "$git_name" ] || [ -n "$git_email" ]; then
+        echo-ok "$(printf "%-14s - %s <%s>" "git identity" "$git_name" "$git_email")"
+    else
+        echo-miss "$(printf "%-14s - user.name / user.email not configured" "git identity")"
+    fi
+
+    if [ -f "$HOME/local_zshrc" ]; then
+        echo-ok "$(printf "%-14s - %s (present)" "local_zshrc" "$HOME/local_zshrc")"
+    else
+        echo-skip "$(printf "%-14s - %s (not used)" "local_zshrc" "$HOME/local_zshrc")"
+    fi
+
+    if [ -f "$HOME/.tmux.local.conf" ]; then
+        echo-ok "$(printf "%-14s - %s (present)" "tmux.local" "$HOME/.tmux.local.conf")"
+    else
+        echo-skip "$(printf "%-14s - %s (not used)" "tmux.local" "$HOME/.tmux.local.conf")"
+    fi
+
+    if [ -d "$olddir" ]; then
+        local backup_count
+        backup_count="$(find "$olddir" -mindepth 1 -maxdepth 1 | wc -l)"
+        echo-ok "$(printf "%-14s - %s (%s items)" "backups" "$olddir" "$backup_count")"
+    else
+        echo-skip "$(printf "%-14s - %s (none)" "backups" "$olddir")"
+    fi
+}
+
 function check_link {
     local label="$1"
     local src="$2"
@@ -206,6 +268,8 @@ function check_recommended_tools {
 }
 
 if [ "$1" = "-l" ] || [ "$1" = "--list" ]; then
+    check_environment
+    echo
     echo ==================================================
     echo Installed Dotfiles
     echo ==================================================

@@ -6,6 +6,21 @@ dotfiles_dir="$(cd "$scripts_dir/.." && pwd)"
 
 function list_files {
     git -C "$dotfiles_dir" ls-files --cached --others --exclude-standard | sort
+    if [ -f "$HOME/local_zshrc" ]; then
+        echo "~/local_zshrc"
+    fi
+    if [ -f "$HOME/.tmux.local.conf" ]; then
+        echo "~/.tmux.local.conf"
+    fi
+}
+
+function resolve_dotfile_path {
+    local item="$1"
+    if [[ "$item" == "~/"* ]]; then
+        echo "$HOME/$(basename "$item")"
+    else
+        echo "$dotfiles_dir/$item"
+    fi
 }
 
 function show_help {
@@ -14,15 +29,15 @@ function show_help {
     echo "Repository: $dotfiles_dir"
     echo
     echo "Usage:"
-    echo "  dot                    Interactive fzf file picker -> open in \$EDITOR (${EDITOR:-vim})"
-    echo "  dot <query>            Open matching dotfile (or pre-fill fzf with <query>)"
-    echo "  dot -l, --list, list   List installed dotfile symlinks and recommended tools"
-    echo "  dot -g, --git, git     Open lazygit inside $dotfiles_dir"
-    echo "  dot -s, --status       Show git status of dotfiles"
-    echo "  dot -d, --diff         Show git diff of uncommitted dotfile changes"
-    echo "  dot -i, --install      Run install.sh"
-    echo "  dot -u, --update       Run install.sh -u (git pull --ff-only + install)"
-    echo "  dot -h, --help         Show this help message"
+    echo "  dot                          Interactive fzf file picker -> open in \$EDITOR (${EDITOR:-vim})"
+    echo "  dot <query>                  Open matching dotfile or local override (e.g., 'dot local')"
+    echo "  dot -l, --list, list         Show environment info, active symlinks, and installed tools"
+    echo "  dot -g, --git, git           Open lazygit inside $dotfiles_dir"
+    echo "  dot -s, --status, status     Show git status of dotfiles"
+    echo "  dot -d, --diff, diff         Show git diff of uncommitted dotfile changes"
+    echo "  dot -i, --install, install   Run install.sh"
+    echo "  dot -u, --update, update     Run install.sh -u (git pull --ff-only + install)"
+    echo "  dot -h, --help, help         Show this help message"
 }
 
 function pick_and_edit {
@@ -33,7 +48,7 @@ function pick_and_edit {
         exit 1
     fi
 
-    local preview_cmd="nl -ba \"$dotfiles_dir/\"{}"
+    local preview_cmd="f={}; case \"\$f\" in \"~/\"*) f=\"$HOME/\$(basename \"\$f\")\" ;; *) f=\"$dotfiles_dir/\$f\" ;; esac; nl -ba \"\$f\""
     local selected
     selected="$(
         list_files | fzf \
@@ -46,7 +61,7 @@ function pick_and_edit {
     )"
 
     if [ -n "$selected" ]; then
-        exec "${EDITOR:-vim}" "$dotfiles_dir/$selected"
+        exec "${EDITOR:-vim}" "$(resolve_dotfile_path "$selected")"
     fi
 }
 
