@@ -122,13 +122,15 @@ function sync_tool_config {
 
 function sync_herdr_app_config {
     if [ -n "$(resolve_tool "herdr-app")" ]; then
-        link_file "$dir/herdr-app/keys.json"           "$xdg_config/herdr-app/keys.json"           "herdr_app_keys.json"
-        link_file "$dir/herdr-app/settings.json"       "$xdg_config/herdr-app/settings.json"       "herdr_app_settings.json"
-        link_file "$dir/herdr-app/themes/gruvbox.json" "$xdg_config/herdr-app/themes/gruvbox.json" "herdr_app_gruvbox.json"
+        link_file "$dir/herdr-app/keys.json"               "$xdg_config/herdr-app/keys.json"               "herdr_app_keys.json"
+        link_file "$dir/herdr-app/settings.json"           "$xdg_config/herdr-app/settings.json"           "herdr_app_settings.json"
+        link_file "$dir/herdr-app/themes/gruvbox.json"     "$xdg_config/herdr-app/themes/gruvbox.json"     "herdr_app_gruvbox.json"
+        link_file "$dir/herdr-app/mods/copy-mode/mod.json" "$xdg_config/herdr-app/mods/copy-mode/mod.json" "herdr_app_copy_mode_mod.json"
+        link_file "$dir/herdr-app/mods/copy-mode/main.js"  "$xdg_config/herdr-app/mods/copy-mode/main.js"  "herdr_app_copy_mode_main.js"
     else
         local unlinked=0
         local rel
-        for rel in "keys.json" "settings.json" "themes/gruvbox.json"; do
+        for rel in "keys.json" "settings.json" "themes/gruvbox.json" "mods/copy-mode/mod.json" "mods/copy-mode/main.js"; do
             local src="$dir/herdr-app/$rel"
             local dst="$xdg_config/herdr-app/$rel"
             if [ -L "$dst" ] && [ "$(readlink -f "$dst")" = "$(readlink -f "$src")" ]; then
@@ -276,7 +278,7 @@ function check_link {
 function check_herdr_app_links {
     local linked=1
     local rel
-    for rel in "keys.json" "settings.json" "themes/gruvbox.json"; do
+    for rel in "keys.json" "settings.json" "themes/gruvbox.json" "mods/copy-mode/mod.json" "mods/copy-mode/main.js"; do
         local src="$dir/herdr-app/$rel"
         local dst="$xdg_config/herdr-app/$rel"
         if [ ! -L "$dst" ] || [ "$(readlink -f "$dst")" != "$(readlink -f "$src")" ]; then

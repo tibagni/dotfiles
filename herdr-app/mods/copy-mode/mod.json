@@ -1,0 +1,9 @@
+{
+  "place": "none",
+  "title": "Copy Mode",
+  "overlay": {
+    "kind": "dialog",
+    "width": 0.94,
+    "height": 0.9
+  }
+}

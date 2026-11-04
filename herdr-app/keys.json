@@ -70,6 +70,8 @@
     "ctrl-b left": "pane.go:left",
     "ctrl-b right": "pane.go:right",
 
+    "ctrl-b [": "mod.open:copy-mode",
+    "ctrl-b ]": "terminal.paste",
     "ctrl-b h": "pane.go:left",
     "ctrl-b j": "pane.go:down",
     "ctrl-b k": "pane.go:up",
