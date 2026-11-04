@@ -9,8 +9,8 @@ auto_switch = false
 prefix = "ctrl+b"
 
 # Match tmux pane splitting layout
-split_vertical = 'prefix+%'
-split_horizontal = 'prefix+"'
+split_vertical = "prefix+|"
+split_horizontal = "prefix+-"
 
 # Match tmux session detachment
 detach = "prefix+d"

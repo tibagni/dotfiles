@@ -120,6 +120,30 @@ function sync_tool_config {
     fi
 }
 
+function sync_herdr_app_config {
+    if [ -n "$(resolve_tool "herdr-app")" ]; then
+        link_file "$dir/herdr-app/keys.json"           "$xdg_config/herdr-app/keys.json"           "herdr_app_keys.json"
+        link_file "$dir/herdr-app/settings.json"       "$xdg_config/herdr-app/settings.json"       "herdr_app_settings.json"
+        link_file "$dir/herdr-app/themes/gruvbox.json" "$xdg_config/herdr-app/themes/gruvbox.json" "herdr_app_gruvbox.json"
+    else
+        local unlinked=0
+        local rel
+        for rel in "keys.json" "settings.json" "themes/gruvbox.json"; do
+            local src="$dir/herdr-app/$rel"
+            local dst="$xdg_config/herdr-app/$rel"
+            if [ -L "$dst" ] && [ "$(readlink -f "$dst")" = "$(readlink -f "$src")" ]; then
+                echo-info "Removing unused $dst symlink (herdr-app is not installed)..."
+                rm "$dst"
+                echo-ok "Removed $dst symlink"
+                unlinked=1
+            fi
+        done
+        if [ "$unlinked" -eq 0 ]; then
+            echo-skip "herdr-app not installed, skipping $xdg_config/herdr-app"
+        fi
+    fi
+}
+
 function setup_zsh {
     if [ -d "$HOME/.oh-my-zsh" ]; then
         local zsh_custom="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
@@ -249,6 +273,25 @@ function check_link {
     fi
 }
 
+function check_herdr_app_links {
+    local linked=1
+    local rel
+    for rel in "keys.json" "settings.json" "themes/gruvbox.json"; do
+        local src="$dir/herdr-app/$rel"
+        local dst="$xdg_config/herdr-app/$rel"
+        if [ ! -L "$dst" ] || [ "$(readlink -f "$dst")" != "$(readlink -f "$src")" ]; then
+            linked=0
+            break
+        fi
+    done
+
+    if [ "$linked" -eq 1 ]; then
+        echo-ok "$(printf "%-14s - %s -> %s" "herdr-app" "$xdg_config/herdr-app" "$dir/herdr-app")"
+    else
+        echo-miss "$(printf "%-14s - %s (not linked)" "herdr-app" "$xdg_config/herdr-app")"
+    fi
+}
+
 function check_recommended_tools {
     echo ==================================================
     echo Recommended Terminal Tools
@@ -261,7 +304,16 @@ function check_recommended_tools {
     check_tool "ripgrep (rg)" "rg"               "https://github.com/BurntSushi/ripgrep"
     check_tool "fzf"          "fzf"              "https://github.com/junegunn/fzf"
     check_tool "delta"        "delta"            "https://github.com/dandavison/delta"
-    check_tool "herdr"        "herdr"            "https://herdr.dev/"
+    local herdr_tui herdr_app
+    herdr_tui="$(resolve_tool "herdr")"
+    herdr_app="$(resolve_tool "herdr-app")"
+    if [ -n "$herdr_tui" ] || [ -n "$herdr_app" ]; then
+        [ -n "$herdr_tui" ] && echo-ok "$(printf "%-14s - %s" "herdr" "$herdr_tui")"
+        [ -n "$herdr_app" ] && echo-ok "$(printf "%-14s - %s" "herdr-app" "$herdr_app")"
+    else
+        echo-miss "$(printf "%-14s - Not installed (%s)" "herdr" "https://herdr.dev/")"
+        missing_tools=$((missing_tools + 1))
+    fi
     check_tool "lazygit"      "lazygit"          "https://github.com/jesseduffield/lazygit"
     check_tool "github-cli"   "gh"               "https://cli.github.com/"
     check_tool "glow"         "glow"             "https://github.com/charmbracelet/glow"
@@ -279,6 +331,7 @@ if [ "$1" = "-l" ] || [ "$1" = "--list" ]; then
     check_link "zsh"       "$dir/zshrc"             "$HOME/.zshrc"
     check_link "ideavim"   "$dir/ideavimrc"         "$HOME/.ideavimrc"
     check_link "herdr"     "$dir/herdr/config.toml" "$xdg_config/herdr/config.toml"
+    check_herdr_app_links
     check_link "lazygit"   "$dir/lazygit/config.yml" "$xdg_config/lazygit/config.yml"
     if git config --global --get-all include.path 2>/dev/null | grep -Fxq "$dir/gitconfig"; then
         echo-ok "$(printf "%-14s - ~/.gitconfig includes %s" "git" "$dir/gitconfig")"
@@ -323,6 +376,7 @@ sync_tool_config "tmux"                  "$dir/tmux.conf"          "$HOME/.tmux.
 sync_tool_config "zsh"                   "$dir/zshrc"              "$HOME/.zshrc"
 sync_tool_config "$xdg_config/JetBrains" "$dir/ideavimrc"          "$HOME/.ideavimrc"
 sync_tool_config "herdr"                 "$dir/herdr/config.toml"  "$xdg_config/herdr/config.toml"   "herdr_config.toml"
+sync_herdr_app_config
 sync_tool_config "lazygit"               "$dir/lazygit/config.yml" "$xdg_config/lazygit/config.yml" "lazygit_config.yml"
 
 # Tool-specific setup steps
