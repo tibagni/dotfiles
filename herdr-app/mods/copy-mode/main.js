@@ -20,7 +20,8 @@ export default class CopyMode extends View {
     this.preferredCol = 0;
     this.mode = null; // null | "char" | "line"
     this.anchor = null; // { row, col }
-    this.pendingKey = null; // "g" | "y"
+    this.pendingKey = null; // "g" | "y" | "f" | "F" | "t" | "T"
+    this.lastFind = null; // { type, target }
     this.loading = true;
     this.searching = false;
     this.query = "";
@@ -180,6 +181,36 @@ export default class CopyMode extends View {
     }
   }
 
+  runFind(type, target) {
+    const line = this.lines[this.row] ?? "";
+    let idx = -1;
+    if (type === "f") {
+      idx = line.indexOf(target, this.col + 1);
+    } else if (type === "F") {
+      idx = line.lastIndexOf(target, Math.max(0, this.col - 1));
+    } else if (type === "t") {
+      const found = line.indexOf(target, this.col + 1);
+      if (found !== -1) idx = Math.max(0, found - 1);
+    } else if (type === "T") {
+      const found = line.lastIndexOf(target, Math.max(0, this.col - 1));
+      if (found !== -1) idx = Math.min(Math.max(0, line.length - 1), found + 1);
+    }
+    if (idx !== -1) {
+      this.moveTo(this.row, idx, false);
+      this.lastFind = { type, target };
+    }
+  }
+
+  repeatFind(reverse = false) {
+    if (!this.lastFind) return;
+    let { type, target } = this.lastFind;
+    if (reverse) {
+      const opposite = { f: "F", F: "f", t: "T", T: "t" };
+      type = opposite[type] || type;
+    }
+    this.runFind(type, target);
+  }
+
   selectionBounds() {
     if (!this.mode || !this.anchor) return null;
     const a = this.anchor;
@@ -267,7 +298,16 @@ export default class CopyMode extends View {
 
     cx.stop_propagation();
 
-    // Pending two-key sequences (gg, yy, yw)
+    // Pending multi-key sequences (gg, yy, yw, f/F/t/T)
+    if (this.pendingKey === "f" || this.pendingKey === "F" || this.pendingKey === "t" || this.pendingKey === "T") {
+      const type = this.pendingKey;
+      this.pendingKey = null;
+      if (key && key.length === 1 && !ctrl) {
+        this.runFind(type, key);
+      }
+      cx.notify();
+      return;
+    }
     if (this.pendingKey === "g") {
       this.pendingKey = null;
       if (key === "g" && !shift) {
@@ -417,6 +457,38 @@ export default class CopyMode extends View {
     }
     if (key === "g" && !shift && !ctrl) {
       this.pendingKey = "g";
+      cx.notify();
+      return;
+    }
+
+    // In-line find motions (f, F, t, T, ;, ,)
+    if (key === "f" && !ctrl && !shift) {
+      this.pendingKey = "f";
+      cx.notify();
+      return;
+    }
+    if ((key === "F" || (key === "f" && shift)) && !ctrl) {
+      this.pendingKey = "F";
+      cx.notify();
+      return;
+    }
+    if (key === "t" && !ctrl && !shift) {
+      this.pendingKey = "t";
+      cx.notify();
+      return;
+    }
+    if ((key === "T" || (key === "t" && shift)) && !ctrl) {
+      this.pendingKey = "T";
+      cx.notify();
+      return;
+    }
+    if (key === ";" && !ctrl && !shift) {
+      this.repeatFind(false);
+      cx.notify();
+      return;
+    }
+    if (key === "," && !ctrl && !shift) {
+      this.repeatFind(true);
       cx.notify();
       return;
     }
@@ -572,14 +644,15 @@ export default class CopyMode extends View {
   render(cx) {
     const t = theme();
     const bounds = this.selectionBounds();
-    const modeLabel =
+    let modeLabel =
       this.mode === "line"
         ? "VISUAL LINE"
         : this.mode === "char"
           ? "VISUAL"
-          : this.pendingKey
-            ? `NORMAL (${this.pendingKey}…)`
-            : "COPY MODE";
+          : "COPY MODE";
+    if (this.pendingKey) {
+      modeLabel += ` (${this.pendingKey}…)`;
+    }
     const modeColor = this.mode ? t.working || t.accent : t.accent;
 
     return v_flex()
@@ -639,7 +712,7 @@ export default class CopyMode extends View {
             div()
               .text_size(11)
               .text_color(t.dim)
-              .child("Arrows/hjkl: move • Space/v/V/Shift+Arrows: select • y/Enter: copy • /: search • q/Esc: close"),
+              .child("Arrows/hjkl: move • f/F/t/T: find • Space/v/V: select • y/Enter: copy • /: search • q/Esc: close"),
           ),
       )
       .child(
