@@ -65,6 +65,9 @@ set incsearch
 set ignorecase
 set smartcase
 
+" Highlight fenced code blocks in Markdown files
+let g:markdown_fenced_languages = ['bash=sh', 'sh', 'vim', 'python', 'javascript', 'json', 'yaml', 'dockerfile', 'kotlin', 'sql', 'toml']
+
 " Enable syntax highlighting
 syntax enable
 
