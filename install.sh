@@ -150,10 +150,11 @@ function sync_yazi_config {
     if [ -n "$(resolve_tool "yazi")" ]; then
         link_file "$dir/yazi/yazi.toml"  "$xdg_config/yazi/yazi.toml"  "yazi_yazi.toml"
         link_file "$dir/yazi/theme.toml" "$xdg_config/yazi/theme.toml" "yazi_theme.toml"
+        link_file "$dir/yazi/y.sh"       "$xdg_config/yazi/y.sh"       "yazi_y.sh"
     else
         local unlinked=0
         local rel
-        for rel in "yazi.toml" "theme.toml"; do
+        for rel in "yazi.toml" "theme.toml" "y.sh"; do
             local src="$dir/yazi/$rel"
             local dst="$xdg_config/yazi/$rel"
             if [ -L "$dst" ] && [ "$(readlink -f "$dst")" = "$(readlink -f "$src")" ]; then
@@ -238,6 +239,16 @@ function setup_yazi {
         fi
     else
         echo-skip "ya not installed, skipping Yazi flavors"
+    fi
+
+    if [ -f "$HOME/.bashrc" ]; then
+        if ! grep -q 'yazi/y.sh' "$HOME/.bashrc"; then
+            echo-info "Adding yazi shell wrapper to ~/.bashrc..."
+            printf '\n# Yazi shell wrapper\n[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/yazi/y.sh" ] && source "${XDG_CONFIG_HOME:-$HOME/.config}/yazi/y.sh"\n' >> "$HOME/.bashrc"
+            echo-ok "Added yazi shell wrapper to ~/.bashrc"
+        else
+            echo-skip "yazi shell wrapper already in ~/.bashrc"
+        fi
     fi
 }
 
@@ -337,7 +348,7 @@ function check_herdr_app_links {
 function check_yazi_links {
     local linked=1
     local rel
-    for rel in "yazi.toml" "theme.toml"; do
+    for rel in "yazi.toml" "theme.toml" "y.sh"; do
         local src="$dir/yazi/$rel"
         local dst="$xdg_config/yazi/$rel"
         if [ ! -L "$dst" ] || [ "$(readlink -f "$dst")" != "$(readlink -f "$src")" ]; then
