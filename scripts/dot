@@ -9,6 +9,9 @@ function list_files {
     if [ -f "$HOME/local_zshrc" ]; then
         echo "~/local_zshrc"
     fi
+    if [ -f "$HOME/local_bashrc" ]; then
+        echo "~/local_bashrc"
+    fi
     if [ -f "$HOME/.tmux.local.conf" ]; then
         echo "~/.tmux.local.conf"
     fi

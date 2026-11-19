@@ -200,6 +200,21 @@ function setup_zsh {
     fi
 }
 
+function setup_bash {
+    local bashrc="$HOME/.bashrc"
+    if [ -f "$bashrc" ]; then
+        if ! grep -Fq "$dir/bashrc" "$bashrc"; then
+            echo-info "Adding $dir/bashrc to ~/.bashrc..."
+            printf '\n# Include dotfiles bashrc\n[ -f "%s/bashrc" ] && source "%s/bashrc"\n' "$dir" "$dir" >> "$bashrc"
+            echo-ok "Added $dir/bashrc to ~/.bashrc"
+        else
+            echo-skip "$dir/bashrc already included in ~/.bashrc"
+        fi
+    else
+        echo-skip "~/.bashrc not found, skipping"
+    fi
+}
+
 function setup_vim {
     if [ ! -d "$HOME/.vim/bundle/Vundle.vim" ]; then
         echo-info "Installing Vundle..."
@@ -239,16 +254,6 @@ function setup_yazi {
         fi
     else
         echo-skip "ya not installed, skipping Yazi flavors"
-    fi
-
-    if [ -f "$HOME/.bashrc" ]; then
-        if ! grep -q 'yazi/y.sh' "$HOME/.bashrc"; then
-            echo-info "Adding yazi shell wrapper to ~/.bashrc..."
-            printf '\n# Yazi shell wrapper\n[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/yazi/y.sh" ] && source "${XDG_CONFIG_HOME:-$HOME/.config}/yazi/y.sh"\n' >> "$HOME/.bashrc"
-            echo-ok "Added yazi shell wrapper to ~/.bashrc"
-        else
-            echo-skip "yazi shell wrapper already in ~/.bashrc"
-        fi
     fi
 }
 
@@ -297,6 +302,12 @@ function check_environment {
         echo-ok "$(printf "%-14s - %s (present)" "local_zshrc" "$HOME/local_zshrc")"
     else
         echo-skip "$(printf "%-14s - %s (not used)" "local_zshrc" "$HOME/local_zshrc")"
+    fi
+
+    if [ -f "$HOME/local_bashrc" ]; then
+        echo-ok "$(printf "%-14s - %s (present)" "local_bashrc" "$HOME/local_bashrc")"
+    else
+        echo-skip "$(printf "%-14s - %s (not used)" "local_bashrc" "$HOME/local_bashrc")"
     fi
 
     if [ -f "$HOME/.tmux.local.conf" ]; then
@@ -401,6 +412,13 @@ if [ "$1" = "-l" ] || [ "$1" = "--list" ]; then
     check_link "vim"       "$dir/vim"               "$HOME/.vim"
     check_link "tmux"      "$dir/tmux.conf"         "$HOME/.tmux.conf"
     check_link "zsh"       "$dir/zshrc"             "$HOME/.zshrc"
+    if [ -f "$HOME/.bashrc" ] && grep -Fq "$dir/bashrc" "$HOME/.bashrc"; then
+        echo-ok "$(printf "%-14s - ~/.bashrc includes %s" "bash" "$dir/bashrc")"
+    elif [ -f "$HOME/.bashrc" ]; then
+        echo-miss "$(printf "%-14s - ~/.bashrc (not included)" "bash")"
+    else
+        echo-skip "$(printf "%-14s - ~/.bashrc (not found)" "bash")"
+    fi
     check_link "ideavim"   "$dir/ideavimrc"         "$HOME/.ideavimrc"
     check_link "herdr"     "$dir/herdr/config.toml" "$xdg_config/herdr/config.toml"
     check_herdr_app_links
@@ -431,17 +449,8 @@ echo ==================================================
 echo Dotfiles
 echo ==================================================
 
-# Install scripts folder and ensure ~/scripts is in PATH for bash environments
+# Install scripts folder
 link_file "$dir/scripts" "$HOME/scripts" "scripts"
-if [ -f "$HOME/.bashrc" ]; then
-    if ! grep -q 'HOME/scripts' "$HOME/.bashrc" && ! grep -q '~/scripts' "$HOME/.bashrc"; then
-        echo-info "Adding ~/scripts to PATH in ~/.bashrc..."
-        printf '\n# Add dotfiles scripts to PATH\nexport PATH="$HOME/scripts:$PATH"\n' >> "$HOME/.bashrc"
-        echo-ok "Added ~/scripts to ~/.bashrc"
-    else
-        echo-skip "~/scripts already in ~/.bashrc"
-    fi
-fi
 
 # Tool-specific configurations (link if installed, unlink if not)
 sync_tool_config "vim"                   "$dir/vim"                "$HOME/.vim"
@@ -455,6 +464,7 @@ sync_yazi_config
 
 # Tool-specific setup steps
 run_if_installed "zsh" setup_zsh
+run_if_installed "bash" setup_bash
 run_if_installed "vim" setup_vim
 run_if_installed "git" setup_git
 run_if_installed "yazi" setup_yazi

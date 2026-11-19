@@ -1,22 +1,6 @@
-# If you come from bash you might have to change your $PATH.
-export PATH=$HOME/scripts:$HOME/.local/bin:$HOME/bin:/usr/local/bin:$PATH
-# Automatically deduplicate PATH entries (keeps only the first occurrence of each directory)
-typeset -U path PATH
-
-# On macOS, export XDG variables so CLI tools use ~/.config instead of ~/Library
-# (On Linux these are already the defaults, and exporting them globally breaks Snap sandboxes like glow)
-if [[ "$OSTYPE" == darwin* ]]; then
-    export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
-    export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
-    export XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
-    export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
-fi
-
 # Path to your oh-my-zsh installation.
 export ZSH=$HOME/.oh-my-zsh
 
-export VISUAL=vim
-export EDITOR="$VISUAL"
 export TERM=xterm-256color
 
 # Set name of the theme to load --- if set to "random", it will
@@ -34,6 +18,11 @@ plugins=(git encode64 extract command-not-found zsh-autosuggestions zsh-syntax-h
 
 source $ZSH/oh-my-zsh.sh
 
+# Load shared shell configuration (PATH, EDITOR, aliases, yazi, nvm, etc.)
+_dotfiles_dir="${${(%):-%x}:A:h}"
+[ -f "$_dotfiles_dir/shell_common.sh" ] && source "$_dotfiles_dir/shell_common.sh"
+unset _dotfiles_dir
+
 # Enable fzf keybindings and fuzzy auto-completion for Zsh
 if [ -f /usr/share/doc/fzf/examples/key-bindings.zsh ]
 then
@@ -43,49 +32,13 @@ if [ -f /usr/share/doc/fzf/examples/completion.zsh ]
 then
     source /usr/share/doc/fzf/examples/completion.zsh
 fi
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-# User configuration
-
-function mkcd()
-{
-	mkdir $1 && cd $1
-}
-
-# Aliases
-if command -v xdg-open >/dev/null 2>&1; then
-    alias open=xdg-open
-fi
-alias lv="java -jar ~/bin/log-viewer/LogViewer.jar"
-alias d2j="sh ~/bin/dex-tools/dex2jar/d2j-dex2jar.sh -f"
-
-if grep -qi microsoft /proc/version 2>/dev/null; then
-    echo "Configuring Windows aliases"
-    alias adb=adb.exe
-    alias fastboot=fastboot.exe
-    alias explorer="explorer.exe"
-    alias lv='java.exe -jar "C:\Program Files\LogViewer\LogViewer-all.jar"'
-    # Configure the display to run Linux GUI apps on WSL 2 (Windows 10)
-    export DISPLAY="`grep nameserver /etc/resolv.conf | sed 's/nameserver //'`:0"
-    if [ ! -f ~/.xsession ]
-    then
-        echo xfce4-session > ~/.xsession
-    fi
-fi
-
-alias glow='glow -w $(tput cols)'
-
-[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/yazi/y.sh" ] && source "${XDG_CONFIG_HOME:-$HOME/.config}/yazi/y.sh"
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#888,underline"
 
 if command -v fastfetch >/dev/null 2>&1; then
     fastfetch
 fi
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # Include local configs if they exist
 if [[ -f ~/local_zshrc ]]; then
