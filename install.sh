@@ -146,6 +146,29 @@ function sync_herdr_app_config {
     fi
 }
 
+function sync_yazi_config {
+    if [ -n "$(resolve_tool "yazi")" ]; then
+        link_file "$dir/yazi/yazi.toml"  "$xdg_config/yazi/yazi.toml"  "yazi_yazi.toml"
+        link_file "$dir/yazi/theme.toml" "$xdg_config/yazi/theme.toml" "yazi_theme.toml"
+    else
+        local unlinked=0
+        local rel
+        for rel in "yazi.toml" "theme.toml"; do
+            local src="$dir/yazi/$rel"
+            local dst="$xdg_config/yazi/$rel"
+            if [ -L "$dst" ] && [ "$(readlink -f "$dst")" = "$(readlink -f "$src")" ]; then
+                echo-info "Removing unused $dst symlink (yazi is not installed)..."
+                rm "$dst"
+                echo-ok "Removed $dst symlink"
+                unlinked=1
+            fi
+        done
+        if [ "$unlinked" -eq 0 ]; then
+            echo-skip "yazi not installed, skipping $xdg_config/yazi"
+        fi
+    fi
+}
+
 function setup_zsh {
     if [ -d "$HOME/.oh-my-zsh" ]; then
         local zsh_custom="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
@@ -198,6 +221,23 @@ function setup_git {
         echo-ok "Added $dir/gitconfig to ~/.gitconfig"
     else
         echo-skip "$dir/gitconfig already included in ~/.gitconfig"
+    fi
+}
+
+function setup_yazi {
+    if [ -n "$(resolve_tool "ya")" ]; then
+        if [ ! -d "$xdg_config/yazi/flavors/gruvbox-dark.yazi" ]; then
+            echo-info "Installing Yazi gruvbox-dark flavor..."
+            if ya pkg add bennyyip/gruvbox-dark; then
+                echo-ok "Installed Yazi gruvbox-dark flavor"
+            else
+                echo-miss "Failed to install Yazi gruvbox-dark flavor"
+            fi
+        else
+            echo-skip "Yazi gruvbox-dark flavor already installed"
+        fi
+    else
+        echo-skip "ya not installed, skipping Yazi flavors"
     fi
 }
 
@@ -294,6 +334,25 @@ function check_herdr_app_links {
     fi
 }
 
+function check_yazi_links {
+    local linked=1
+    local rel
+    for rel in "yazi.toml" "theme.toml"; do
+        local src="$dir/yazi/$rel"
+        local dst="$xdg_config/yazi/$rel"
+        if [ ! -L "$dst" ] || [ "$(readlink -f "$dst")" != "$(readlink -f "$src")" ]; then
+            linked=0
+            break
+        fi
+    done
+
+    if [ "$linked" -eq 1 ]; then
+        echo-ok "$(printf "%-14s - %s -> %s" "yazi" "$xdg_config/yazi" "$dir/yazi")"
+    else
+        echo-miss "$(printf "%-14s - %s (not linked)" "yazi" "$xdg_config/yazi")"
+    fi
+}
+
 function check_recommended_tools {
     echo ==================================================
     echo Recommended Terminal Tools
@@ -302,7 +361,7 @@ function check_recommended_tools {
     check_tool "oh-my-zsh"    "$HOME/.oh-my-zsh" "https://ohmyz.sh/"
     check_tool "fastfetch"    "fastfetch"        "https://github.com/fastfetch-cli/fastfetch"
     check_tool "tldr"         "tldr"             "https://tldr.sh/"
-    check_tool "broot (br)"   "broot"            "https://github.com/Canop/broot"
+    check_tool "yazi (y)"     "yazi"             "https://yazi-rs.github.io/"
     check_tool "ripgrep (rg)" "rg"               "https://github.com/BurntSushi/ripgrep"
     check_tool "fzf"          "fzf"              "https://github.com/junegunn/fzf"
     check_tool "delta"        "delta"            "https://github.com/dandavison/delta"
@@ -335,6 +394,7 @@ if [ "$1" = "-l" ] || [ "$1" = "--list" ]; then
     check_link "herdr"     "$dir/herdr/config.toml" "$xdg_config/herdr/config.toml"
     check_herdr_app_links
     check_link "lazygit"   "$dir/lazygit/config.yml" "$xdg_config/lazygit/config.yml"
+    check_yazi_links
     if git config --global --get-all include.path 2>/dev/null | grep -Fxq "$dir/gitconfig"; then
         echo-ok "$(printf "%-14s - ~/.gitconfig includes %s" "git" "$dir/gitconfig")"
     else
@@ -380,11 +440,13 @@ sync_tool_config "$xdg_config/JetBrains" "$dir/ideavimrc"          "$HOME/.ideav
 sync_tool_config "herdr"                 "$dir/herdr/config.toml"  "$xdg_config/herdr/config.toml"   "herdr_config.toml"
 sync_herdr_app_config
 sync_tool_config "lazygit"               "$dir/lazygit/config.yml" "$xdg_config/lazygit/config.yml" "lazygit_config.yml"
+sync_yazi_config
 
 # Tool-specific setup steps
 run_if_installed "zsh" setup_zsh
 run_if_installed "vim" setup_vim
 run_if_installed "git" setup_git
+run_if_installed "yazi" setup_yazi
 
 echo-ok "...done"
 echo

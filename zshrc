@@ -74,7 +74,16 @@ fi
 
 alias glow='glow -w $(tput cols)'
 
-[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/broot/launcher/bash/br" ] && source "${XDG_CONFIG_HOME:-$HOME/.config}/broot/launcher/bash/br"
+if command -v yazi >/dev/null 2>&1; then
+    function y() {
+        local tmp cwd
+        tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
+        command yazi "$@" --cwd-file="$tmp"
+        IFS= read -r -d '' cwd < "$tmp"
+        [ "$cwd" != "$PWD" ] && [ -d "$cwd" ] && builtin cd -- "$cwd" || builtin true
+        command rm -f -- "$tmp"
+    }
+fi
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#888,underline"
 
 if command -v fastfetch >/dev/null 2>&1; then

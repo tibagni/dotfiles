@@ -14,7 +14,7 @@ Run `tools` (or `tools -i` for an interactive `fzf` browser) from anywhere to li
  * __[zsh](https://www.zsh.org/)__ + __[Oh My Zsh](https://ohmyz.sh/)__ - `A powerful shell and framework for managing zsh configuration`
  * __[fastfetch](https://github.com/fastfetch-cli/fastfetch)__ - `A command-line system information tool`
  * __[tldr](https://tldr.sh/)__ - `A collection of simplified and community-driven man pages. (better and easier man pages)`
- * __[broot (br)](https://github.com/Canop/broot)__ - `A better way to navigate directories` ([cheatsheet](https://github.com/tibagni/cheatsheets/blob/master/broot.md))
+ * __[yazi (y)](https://yazi-rs.github.io/)__ - `Blazing fast terminal file manager written in Rust, based on async I/O`
  * __[ripgrep (rg)](https://github.com/BurntSushi/ripgrep)__ - `A recursive line-oriented CLI search tool`
  * __[fzf](https://github.com/junegunn/fzf)__ - `A command-line fuzzy finder`
  * __[delta](https://github.com/dandavison/delta)__ - `A syntax-highlighting pager for git, diff, grep, rg --json, and blame output`
@@ -30,4 +30,4 @@ Run `tools` (or `tools -i` for an interactive `fzf` browser) from anywhere to li
 
 
 ## Cheatsheets
-* __[tibagni/cheatsheets](https://github.com/tibagni/cheatsheets)__ - `Personal cheatsheets for Vim, Tmux, Bash, IntelliJ, Broot, and more`
+* __[tibagni/cheatsheets](https://github.com/tibagni/cheatsheets)__ - `Personal cheatsheets for Vim, Tmux, Bash, IntelliJ, Docker, and more`

@@ -31,7 +31,7 @@ function show_help {
     echo
     echo "Usage:"
     echo "  cheat                  Open interactive fzf picker with live glow preview"
-    echo "  cheat <topic>          Render a specific cheatsheet (e.g., 'cheat broot')"
+    echo "  cheat <topic>          Render a specific cheatsheet (e.g., 'cheat vim')"
     echo "  cheat -l, --list       List all available cheatsheet topics"
     echo "  cheat -e, --edit <t>   Create or edit a cheatsheet in \$EDITOR (${EDITOR:-vim})"
     echo "  cheat -u, --update     Pull latest cheatsheets from GitHub in the foreground"
